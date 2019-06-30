@@ -59,13 +59,13 @@ public class WordBreak139 {
 //        if (wordDict.isEmpty())
 //            return false;
 //
-//        Set<String> set = new HashSet<>(wordDict);
+//        set1<String> set = new HashSet<>(wordDict);
 //        boolean[][] bm = preprocessInput(s, set);
 //
 //        return contains(0, s.length() - 1, bm);
 //    }
 
-//    private boolean[][] preprocessInput(String s, Set<String> wordDict) {
+//    private boolean[][] preprocessInput(String s, set1<String> wordDict) {
 //
 //        boolean[][] mat = new boolean[s.length()][s.length()];
 //

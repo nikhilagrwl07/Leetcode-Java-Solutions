@@ -1,4 +1,4 @@
-package mock.amazon;
+package mock.amazon.set1;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

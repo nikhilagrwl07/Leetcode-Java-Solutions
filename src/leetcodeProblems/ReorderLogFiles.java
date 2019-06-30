@@ -11,6 +11,8 @@ import java.util.*;
 public class ReorderLogFiles {
     public static void main(String[] args) {
 //        String[] inputLogs = {"a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo"};
+        String[] inputLogs =
+                {"l evmbcyaqe zx", "pk amxcdvhuhavi", "cx 965 84 9 20", "b 401957007189", "ez xodjwnc awg", "96t oxgsdkuj j", "af 611441988 6", "l9d 21 6 77 795", "l khuxbzszqarfz", "4zj 6115548620", "l6 fzqtxlo qi j", "anr 76976970 17", "of vtqfbyxaxtce", "j 544232 60 554", "108 u amvyjml s"};
 //        String[] inputLogs = {"1 n u",
 //                "r 527",
 //                "j 893",
@@ -18,9 +20,9 @@ public class ReorderLogFiles {
 //                "6 82"
 //        };
 
-        String[] inputLogs = {
-                "a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo", "a2 act car"
-        };
+//        String[] inputLogs = {
+//                "a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo", "a2 act car"
+//        };
         String[] orderedLogs = reorderLogFiles(inputLogs);
 
         System.out.println(Arrays.toString(orderedLogs));
@@ -29,9 +31,8 @@ public class ReorderLogFiles {
     }
 
     private static String[] reorderLogFiles(String[] logs) {
-        Map<String, String> letterLogs = new LinkedHashMap<>();
-        Map<String, String> digitLogs = new LinkedHashMap<>();
-        int i = 0;
+        Map<String, List<String>> letterLogs = new HashMap<>(); // come first --> sort by remaining and then sort by identifier
+        List<String> digitLogs = new LinkedList<>(); // come last --> sort by order in which element appears
         for (String input : logs) {
             String[] splittedString = input.split(" ");
 
@@ -39,65 +40,55 @@ public class ReorderLogFiles {
 
             //letter logs
             if (c >= 'a' && c <= 'z') {
-                letterLogs.put(splittedString[0] + i, input.substring(splittedString[0].length() + 1));
+                List<String> list = letterLogs.getOrDefault(splittedString[0], new ArrayList<>());
+                list.add(input.substring(splittedString[0].length() + 1));
+                Collections.sort(list);
+                letterLogs.put(splittedString[0], list);
             } else {
-                String value = input.substring(splittedString[0].length() + 1);
-                digitLogs.put(splittedString[0] + i, value);
+                digitLogs.add(input);
             }
-            i++;
         }
 
         // Create a list from elements of HashMap
-        List<Map.Entry<String, String>> letterLogsList =
-                new LinkedList<Map.Entry<String, String>>(letterLogs.entrySet());
+
+        List<Map.Entry<String, List<String>>> letterLogsList =
+                new LinkedList<Map.Entry<String, List<String>>>(letterLogs.entrySet());
 
         // Sort the list
-        Collections.sort(letterLogsList, new Comparator<Map.Entry<String, String>>() {
-            public int compare(Map.Entry<String, String> o1,
-                               Map.Entry<String, String> o2) {
-                return (o1.getValue()).compareTo(o2.getValue());
+
+        Collections.sort(letterLogsList, new Comparator<Map.Entry<String, List<String>>>() {
+            public int compare(Map.Entry<String, List<String>> o1,
+                               Map.Entry<String, List<String>> o2) {
+
+                int min = Math.min(o1.getValue().size(), o2.getValue().size());
+                int compareValue = 0;
+                for (int i = 0; i < min; i++) {
+                    compareValue = o1.getValue().get(i).compareTo(o2.getValue().get(i));
+                    if (compareValue != 0)
+                        break;
+                }
+
+                if (compareValue == 0) {
+                    return o1.getKey().compareTo(o2.getKey());
+                } else {
+                    return compareValue;
+                }
             }
         });
 
-
-        // Create a list from elements of HashMap
-        List<Map.Entry<String, String>> digitLogsList =
-                new LinkedList<Map.Entry<String, String>>(digitLogs.entrySet());
-
-        // Sort the list
-//        Collections.sort(digitLogsList, new Comparator<Map.Entry<String, String>>() {
-//            public int compare(Map.Entry<String, String> o1,
-//                               Map.Entry<String, String> o2) {
-//
-//                char[] s1 = o1.getValue().toCharArray();
-//                char[] s2 = o2.getValue().toCharArray();
-//
-//                for(int i=0;i<Math.min(s1.length, s2.length); i++){
-//                    if (s1[i] < s2[i])
-//                    {
-//                        return -1;
-//                    }
-//                    else if(s1[i] > s2[i])
-//                    {
-//                        return 1;
-//                    }
-//                }
-//
-//                return (o1.getValue()).compareTo(o2.getValue());
-//            }
-//        });
-
         String[] result = new String[logs.length];
-        i = 0;
-        for (Map.Entry<String, String> m : letterLogsList) {
-            result[i++] = m.getKey().substring(0, m.getKey().length() - 1) + " " + m.getValue();
+        int index = 0;
+        for (Map.Entry<String, List<String>> m : letterLogsList) {
+            for (String v : m.getValue()) {
+                result[index++] = m.getKey() + " " + v;
+            }
         }
 
-        for (Map.Entry<String, String> m : digitLogsList) {
 
-            String value = String.valueOf(m.getValue());
-            result[i++] = m.getKey().substring(0, m.getKey().length() - 1) + " " + value;
+        for (String digitLog : digitLogs) {
+            result[index++] = digitLog;
         }
+
         return result;
     }
 }

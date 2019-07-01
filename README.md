@@ -14,6 +14,7 @@ To be done -
 8. https://leetcode.com/problems/coin-change/
 9. https://leetcode.com/problems/the-maze/
 10. https://leetcode.com/problems/jump-game-ii/
+11. https://leetcode.com/problems/increasing-triplet-subsequence/
 
 
 

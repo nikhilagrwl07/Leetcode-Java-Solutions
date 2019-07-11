@@ -7,10 +7,14 @@
 3. https://leetcode.com/problems/rotate-image/
 4. https://leetcode.com/problems/cut-off-trees-for-golf-event/
 5. https://leetcode.com/problems/word-ladder-ii/
-6. https://leetcode.com/problems/game-of-life/
 7. https://leetcode.com/problems/coin-change/
 8. https://leetcode.com/problems/jump-game-ii/
 9. https://leetcode.com/problems/uncrossed-lines/
+10. https://leetcode.com/problems/minimum-window-substring/
+11. https://leetcode.com/problems/longest-absolute-file-path/
+12. https://leetcode.com/problems/trapping-rain-water/
+13. https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree/
+14. https://leetcode.com/problems/spiral-matrix/
 
 
 **Coding Questions still not clear to me (Need to revisit) -**

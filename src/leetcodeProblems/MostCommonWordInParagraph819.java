@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MostCommonWordInParagraph {
+public class MostCommonWordInParagraph819 {
     public static void main(String[] args) {
 //        String paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.";
 //        String[] banned = {"hit"};

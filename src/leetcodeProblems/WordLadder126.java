@@ -1,18 +1,17 @@
 package leetcodeProblems;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class WordLadder126 {
     public static void main(String[] args) {
 
-//        String beginWord = "hit";
-//        String endWord = "cog";
-//        List<String> wordList = Arrays.asList("hot", "dot", "dog", "lot", "log", "cog");
+        String beginWord = "hit";
+        String endWord = "cog";
+        List<String> wordList = Arrays.asList("hot", "dot", "dog", "lot", "log", "cog");
 
-        String beginWord = "a";
-        String endWord = "c";
-        List<String> wordList = Arrays.asList("a", "b", "c");
+//        String beginWord = "a";
+//        String endWord = "c";
+//        List<String> wordList = Arrays.asList("a", "b", "c");
 
         WordLadder126 ob = new WordLadder126();
         List<List<String>> ladders = ob.findLadders(beginWord, endWord, wordList);
@@ -22,128 +21,121 @@ public class WordLadder126 {
 
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
 
-        List<List<String>> l = new LinkedList<>();
 
-        if (beginWord == null || beginWord.isEmpty() || endWord == null || endWord.isEmpty()
-                || wordList.isEmpty() || !wordList.contains(endWord)) {
-            return l;
-        }
+        Map<String, Integer> distance = new HashMap<>();
+        Map<String, List<String>> transformation = new HashMap<>();
 
-
-        Map<String, List<String>> m = preprocessWordList(wordList);
-
-        return bfs(m, beginWord, endWord);
-
-    }
-
-    private List<List<String>> bfs(Map<String, List<String>> m, String beginWord, String endWord) {
-
-        List<List<String>> result = new LinkedList<>();
-        int minLength = Integer.MAX_VALUE;
-
-        Queue<Entry> q = new LinkedList<>();
+        //BFS
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+        distance.put(beginWord, 1);
+        Map<String, List<String>> genericWordToRealWords = preProcessWordList(wordList);
         Set<String> isVisited = new HashSet<>();
 
-        q.add(new Entry(beginWord));
-        isVisited.add(beginWord);
 
         while (!q.isEmpty()) {
-            Entry e = q.remove();
-            List<String> words = e.getWords();
 
-            if (words.get(words.size() - 1).equals(endWord)) {
-                result.add(words);
-                if (minLength > words.size()) {
-                    minLength = words.size();
-                }
+            String word = q.remove();
+            if (word.equals(endWord)) {
                 continue;
             }
 
-            String word = words.get(words.size() - 1);
+            for (int index = 0; index < word.length(); index++) {
 
-            for (int i = 0; i < word.length(); i++) {
-                String genericWord = word.substring(0, i) + "*" + word.substring(i + 1);
-                List<String> relatedWords = m.get(genericWord);
+                String genericWord = word.substring(0, index) + "*" + word.substring(index + 1);
+                List<String> realWords = genericWordToRealWords.getOrDefault(genericWord, new ArrayList<>());
 
-                if (relatedWords != null && !relatedWords.isEmpty()) {
-                    for (String rw : relatedWords) {
-                        if (!isVisited.contains(rw) && !rw.equals(word)) {
+                for (String s : realWords) {
+                    if (!isVisited.contains(s)) {
+                        q.add(s);
+                        distance.put(s, distance.get(word) + 1);
 
-                            Entry entry = new Entry(e.getWords());
-                            entry.addElement(rw);
-                            q.add(entry);
-
-                            if (!rw.equals(endWord)) {
-                                isVisited.add(rw);
-                            }
+                        List<String> orDefault = transformation.getOrDefault(word, new ArrayList<>());
+                        if (!orDefault.contains(s) && !s.equals(word)) {
+                            orDefault.add(s);
+                            transformation.put(word, orDefault);
                         }
+
                     }
                 }
 
             }
+            isVisited.add(word);
         }
 
-        final int val = minLength;
 
-        if (!result.isEmpty()) {
-            result = result.stream().filter(s -> s.size() == val)
-                    .collect(Collectors.toList());
-        }
-        return result;
+        isVisited.clear();
+        collectAllPath(beginWord, endWord, transformation, 0, new ArrayList<>(), isVisited);
+        return collectShortestPath(ans);
+
     }
 
-    private Map<String, List<String>> preprocessWordList(List<String> wordList) {
+    List<List<String>> ans = new ArrayList<>();
 
-        Map<String, List<String>> m = new HashMap<>();
+    private List<List<String>> collectShortestPath(List<List<String>> ans) {
+
+        int minLength = Integer.MAX_VALUE;
+
+        for (List<String> l : ans) {
+            minLength = Math.min(minLength, l.size());
+        }
+        List<List<String>> finalAns = new ArrayList<>();
+
+        for (List<String> l : ans) {
+            if (l.size() == minLength) {
+                finalAns.add(l);
+            }
+        }
+        return finalAns;
+    }
+
+
+    private void collectAllPath(String beginWord, String endWord, Map<String, List<String>> transformation,
+                                int index, List<String> result, Set<String> isVisited) {
+
+        if (isVisited.contains(beginWord))
+            return;
+
+        result.add(index, beginWord);
+
+        if (beginWord.equals(endWord)) {
+            List<String> cloned_list = new ArrayList<>(result.subList(0, index + 1));
+            ans.add(cloned_list);
+            return;
+        }
+
+        if (transformation.get(beginWord) != null) {
+            List<String> nextWord = transformation.get(beginWord);
+
+            for (String w : nextWord) {
+                collectAllPath(w, endWord, transformation, index + 1, result, isVisited);
+            }
+        }
+        isVisited.add(beginWord);
+
+    }
+
+
+    private Map<String, List<String>> preProcessWordList(List<String> wordList) {
+
+        Map<String, List<String>> genericWordToRealWord = new HashMap<>();
+        // genericWord to real word mapping
 
         for (String word : wordList) {
 
-            for (int i = 0; i < word.length(); i++) {
-                String genericWord = word.substring(0, i) + "*" + word.substring(i + 1);
-
-                List<String> previous = m.get(genericWord);
-
-                if (previous == null) {
-                    previous = new ArrayList<>();
-                    previous.add(word);
-                    m.put(genericWord, previous);
-                } else {
-                    if (!previous.contains(word)) {
-                        previous.add(word);
-                        m.put(genericWord, previous);
-                    }
+            for (int index = 0; index <= word.length() - 1; index++) {
+                String genericWord = word.substring(0, index) + "*" + word.substring(index + 1);
+                List<String> orDefault = genericWordToRealWord.getOrDefault(genericWord, new ArrayList<>());
+                if (!orDefault.contains(word)) {
+                    orDefault.add(word);
                 }
+                genericWordToRealWord.put(genericWord, orDefault);
             }
         }
-        return m;
+
+        return genericWordToRealWord;
     }
 
-    static class Entry {
-        private List<String> words;
-//        private int level;
-
-        public Entry() {
-            words = new LinkedList<>();
-        }
-
-        public Entry(String e) {
-            words = new LinkedList<>();
-            words.add(e);
-        }
-
-        public Entry(List<String> w) {
-            this.words = new LinkedList<>();
-            this.words.addAll(w);
-        }
-
-        private void addElement(String e) {
-            words.add(e);
-        }
-
-        public List<String> getWords() {
-            return words;
-        }
-    }
 }
 
 

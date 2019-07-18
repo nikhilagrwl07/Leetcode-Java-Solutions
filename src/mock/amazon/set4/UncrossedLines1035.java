@@ -6,7 +6,7 @@
  */
 
 
-package mock.amazon;
+package mock.amazon.set4;
 
 import java.util.*;
 

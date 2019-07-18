@@ -20,51 +20,27 @@ public class JumpsToReachEnd45 {
         System.out.println(minimumJumps);
     }
 
-
     public int jump(int[] nums) {
-
-        if (nums == null || nums.length == 0) {
-            return 0;
-        }
-        int[] storedJumps = new int[nums.length];
-
-        int jumpsCount = jumpsCount(nums, 0, storedJumps);
-        return jumpsCount;
-
-    }
-
-
-    public int jumpsCount(int[] jumps, int currentIndex, int[] storedJumps) {
-
-
-        if (currentIndex == jumps.length - 1) {
-            storedJumps[currentIndex] = 0;
+        if (nums == null || nums.length <= 1) {
             return 0;
         }
 
-        if (storedJumps[currentIndex] > 0) {
-            return storedJumps[currentIndex];
-        }
-        int maxJumpsPossible = jumps[currentIndex];
-        int minJumps = Integer.MAX_VALUE;
+        int[] jumps = new int[nums.length];
+        jumps[0] = 0;
 
-        for (int j = 1; j <= maxJumpsPossible && (currentIndex + j) <= jumps.length - 1; j++) {
+        for (int currentIndex = 0; currentIndex <= nums.length - 1; currentIndex++) {
 
-            if (jumps[currentIndex + j] > 0 || currentIndex + j == jumps.length - 1) {
 
-                int count = 1 + jumpsCount(jumps, currentIndex + j, storedJumps);
-
-                if (count >= 1 && count < Integer.MAX_VALUE) {
-                    if (count < minJumps) {
-                        minJumps = count;
-                    }
-                }
-
-                if ((storedJumps[currentIndex + j] > minJumps)) {
-                    storedJumps[currentIndex + j] = minJumps;
+            for (int j = 1; (j <= nums[currentIndex] && currentIndex + j <= nums.length - 1); j++) {
+                if (jumps[currentIndex + j] == 0) {
+                    jumps[currentIndex + j] = jumps[currentIndex] + 1;
                 }
             }
+
+            if (jumps[nums.length - 1] != 0)
+                return jumps[nums.length - 1];
         }
-        return minJumps;
+
+        return jumps[nums.length - 1];
     }
 }

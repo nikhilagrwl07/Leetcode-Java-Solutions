@@ -5,8 +5,6 @@
 2. https://leetcode.com/problems/alien-dictionary/
 4. https://leetcode.com/problems/cut-off-trees-for-golf-event/
 5. https://leetcode.com/problems/word-ladder-ii/
-7. https://leetcode.com/problems/coin-change/
-8. https://leetcode.com/problems/jump-game-ii/
 9. https://leetcode.com/problems/uncrossed-lines/
 10. https://leetcode.com/problems/minimum-window-substring/
 11. https://leetcode.com/problems/longest-absolute-file-path/

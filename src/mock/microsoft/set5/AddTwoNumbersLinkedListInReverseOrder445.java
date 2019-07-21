@@ -1,4 +1,4 @@
-package leetcodeProblems;/*
+/*
     Problem -
     Solution -
     Time Complexity -
@@ -6,7 +6,10 @@ package leetcodeProblems;/*
  */
 
 
-public class AddTwoNumbersLinkedList {
+package mock.microsoft.set5;
+
+public class AddTwoNumbersLinkedListInReverseOrder445 {
+
     public static void main(String[] args) {
 
         ListNode t1 = new ListNode(7);
@@ -27,9 +30,12 @@ public class AddTwoNumbersLinkedList {
         t10.next = t11;
         t11.next = t12;
 
-        AddTwoNumbersLinkedList ob = new AddTwoNumbersLinkedList();
+        AddTwoNumbersLinkedListInReverseOrder445 ob = new AddTwoNumbersLinkedListInReverseOrder445();
         ob.print(t1);
-        ob.print(t4);
+        ob.print(t10);
+//        ListNode reverseLinkedList = ob.reverseLinkedList(t1);
+//        ob.print(reverseLinkedList);
+
 
         ListNode summedHead = ob.addTwoNumbers(t1, t10);
         ob.print(summedHead);
@@ -37,7 +43,7 @@ public class AddTwoNumbersLinkedList {
 
     }
 
-    private ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
         if (l1 == null)
             return l2;
@@ -45,7 +51,7 @@ public class AddTwoNumbersLinkedList {
         if (l2 == null)
             return l1;
 
-        ListNode head1 = l1, head2 = l2;
+        ListNode head1 = reverseLinkedList(l1), head2 = reverseLinkedList(l2);
 
         ListNode result = null;
         ListNode resultHead = null;
@@ -84,7 +90,9 @@ public class AddTwoNumbersLinkedList {
         } else {
             insertAtlast(result, head1, remainder);
         }
-        return resultHead;
+
+        return reverseLinkedList(resultHead);
+//        return resultHead;
     }
 
     private void insertAtlast(ListNode head, ListNode remaining, int remainder) {
@@ -137,6 +145,28 @@ public class AddTwoNumbersLinkedList {
         }
     }
 
+
+    private ListNode reverseLinkedList(ListNode head) {
+
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode previous = null;
+        ListNode current = head;
+        ListNode next = current.next;
+
+        while (next != null) {
+            current.next = previous;
+            previous = current;
+            current = next;
+            next = next.next;
+        }
+        current.next = previous;
+        return current;
+
+
+    }
+
     private void print(ListNode head) {
 
         ListNode h = head;
@@ -155,5 +185,4 @@ public class AddTwoNumbersLinkedList {
             val = x;
         }
     }
-
 }

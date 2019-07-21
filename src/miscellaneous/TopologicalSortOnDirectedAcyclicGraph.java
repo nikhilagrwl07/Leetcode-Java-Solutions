@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class TopologicalSortOnDirrectedAcyclicGraph {
+public class TopologicalSortOnDirectedAcyclicGraph {
     public static void main(String[] args) {
         int vetexCount = 6;
         Graph g = new Graph(vetexCount);

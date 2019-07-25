@@ -1,8 +1,8 @@
-package leetcodeProblems;
+package mock.amazon.set7;
 
 import java.util.*;
 
-public class CourseSchedule207 {
+public class CourseSchedule {
     public static void main(String[] args) {
         int course = 7;
         int[][] prerequisites =
@@ -24,7 +24,7 @@ public class CourseSchedule207 {
 //        int[][] prerequisites =
 //                {{0, 1}};
 
-        CourseSchedule207 ob = new CourseSchedule207();
+        CourseSchedule ob = new CourseSchedule();
         boolean result = ob.canFinish(course, prerequisites);
         System.out.println(result);
     }

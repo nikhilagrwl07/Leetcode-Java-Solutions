@@ -27,7 +27,7 @@ public class CourseSchedule210 {
         int course = 2;
         int[][] prerequisites =
                 {{1, 0},
-                        {0,1}};
+                        {0, 1}};
 
 //        int course = 4;
 //        int[][] prerequisites = {{1,0},{2,0},{3,1},{3,2}};
@@ -38,92 +38,92 @@ public class CourseSchedule210 {
     }
 
 
-    Map<Integer, List<Integer>> adjList;
-    private boolean isPossible;
-    Map<Integer, String> nodeToStatus;
-    Stack<Integer> topoloigcalOrder;
-
-
     public int[] findOrder(int numCourses, int[][] prerequisites) {
 
         if (prerequisites.length == 0) {
-            int[] order = new int[numCourses];
-            for (int i = 0; i < numCourses; i++) {
-                order[i] = i;
+            int[] courses = new int[numCourses];
+
+            for (int i = 0; i < courses.length; i++) {
+                courses[i] = i;
             }
-            return order;
+            return courses;
         }
 
-        if (numCourses <= 0) {
-            return new int[0];
+        Map<Integer, List<Integer>> subjectToPreRequistic = new HashMap<>(numCourses);
+
+        for (int s = 0; s <= prerequisites.length - 1; s++) {
+            List<Integer> preRequisticOrDefault = subjectToPreRequistic.getOrDefault(prerequisites[s][0], new ArrayList<>());
+            preRequisticOrDefault.add(prerequisites[s][1]);
+            subjectToPreRequistic.put(prerequisites[s][0], preRequisticOrDefault);
         }
 
-        initialize(numCourses, prerequisites);
+        for (int s = 0; s <= numCourses - 1; s++) {
 
-        for (int i = 0; i < numCourses; i++) {
-            if (nodeToStatus.get(i).equals("UNPROCESSED")) {
-                dfs(i);
-            }
-        }
-
-        int[] result;
-        if(isPossible){
-            result = new int[numCourses];
-            int index = numCourses-1;
-            while (!topoloigcalOrder.isEmpty()) {
-                result[index--] = topoloigcalOrder.pop();
+            if (subjectToPreRequistic.get(s) == null) {
+                subjectToPreRequistic.put(s, new ArrayList<>());
             }
         }
-        else {
-            result = new int[0];
+
+
+        Map<Integer, NodeStatus> nodeStatusMap = new HashMap<>(numCourses);
+        for (Integer subjectId : subjectToPreRequistic.keySet()) {
+            nodeStatusMap.put(subjectId, NodeStatus.UNPROCESSED);
         }
-        return result;
+
+        Stack<Integer> order = new Stack<>();
+
+        // trigger dfs from each node
+        for (Integer subjectId : subjectToPreRequistic.keySet()) {
+
+            if (!(nodeStatusMap.get(subjectId) == NodeStatus.COMPLETED)) {
+                if (!dfs(subjectId, subjectToPreRequistic, nodeStatusMap, order)) {
+                    return new int[0];
+                }
+            }
+        }
+
+        int[] courseOrder = new int[numCourses];
+
+        for (int i = numCourses - 1; i >= 0; i--) {
+
+            if (!order.isEmpty()) {
+                courseOrder[i] = order.pop();
+            }
+        }
+        return courseOrder;
+
     }
 
-    private void dfs(int vertex) {
+    private boolean dfs(Integer subjectId, Map<Integer, List<Integer>> subjectToPreRequistic,
+                        Map<Integer, NodeStatus> nodeStatusMap, Stack<Integer> order) {
 
-        if (!isPossible) {
-            return;
+        if ((nodeStatusMap.get(subjectId) == NodeStatus.COMPLETED)) {
+            return true;
         }
-        nodeToStatus.put(vertex, "IN_PROGRESS");
 
-        for (int destination : adjList.get(vertex)) {
-            String destinationStatus = nodeToStatus.get(destination);
-            if (destinationStatus.equals("UNPROCESSED")) {
-                dfs(destination);
-            } else if (destinationStatus.equals("IN_PROGRESS")) {
-                isPossible = false;
-                return;
+        // UNPROCESSED will go down
+        nodeStatusMap.put(subjectId, NodeStatus.PROCESSING);
+        for (Integer prerequisite : subjectToPreRequistic.get(subjectId)) {
+            if (nodeStatusMap.get(prerequisite) == NodeStatus.PROCESSING) {
+                return false;
+            } else if (nodeStatusMap.get(prerequisite) == NodeStatus.UNPROCESSED) {
+                nodeStatusMap.put(prerequisite, NodeStatus.PROCESSING);
+                if (!dfs(prerequisite, subjectToPreRequistic, nodeStatusMap, order)) {
+                    return false;
+                }
             }
         }
 
-        nodeToStatus.put(vertex, "COMPLETED");
-        topoloigcalOrder.push(vertex);
+        nodeStatusMap.put(subjectId, NodeStatus.COMPLETED);
+        order.push(subjectId);
+        return true;
+
     }
 
-
-    private void initialize(int numCourses, int[][] prerequisites) {
-        adjList = new HashMap<>(numCourses);
-
-        for (int i = 0; i < numCourses; i++) {
-            adjList.put(i, new ArrayList<>());
-        }
-
-
-        for (int i = 0; i < prerequisites.length; i++) {
-            List<Integer> dest = adjList.get(prerequisites[i][0]);
-            dest.add(prerequisites[i][1]);
-            adjList.put(prerequisites[i][0], dest);
-        }
-
-        isPossible = true;
-        nodeToStatus = new HashMap<>();
-
-        for (int i = 0; i < numCourses; i++) {
-            nodeToStatus.put(i, "UNPROCESSED");
-        }
-
-        topoloigcalOrder = new Stack<Integer>();
+    public enum NodeStatus {
+        UNPROCESSED,
+        PROCESSING,
+        COMPLETED;
     }
 }
 

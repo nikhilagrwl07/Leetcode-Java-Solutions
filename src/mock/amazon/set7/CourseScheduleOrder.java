@@ -1,42 +1,47 @@
-package leetcodeProblems;
+/*
+    Problem -
+    Solution -
+    Time Complexity -
+    Space Complexity -
+ */
+
+
+package mock.amazon.set7;
 
 import java.util.*;
 
-public class CourseSchedule207 {
+public class CourseScheduleOrder {
     public static void main(String[] args) {
-        int course = 7;
-        int[][] prerequisites =
-                {{0, 5},
-                        {0, 4},
-//                        {4, 0},
-                        {1, 0},
-                        {1, 2},
-                        {2, 0},
-                        {3, 5},
-                        {5, 4},
-                        {5, 6}};
+//        int courses = 2;
+//        int[][] prerequisites = {{1, 0}, {0, 1}};
 
-//        int course = 2;
-//        int[][] prerequisites =
-//                {{0, 1}};
+//        int courses = 3;
+//        int[][] prerequisites = {{2, 0}, {2, 1}};
+//        int[][] prerequisites = {{0, 1}, {0, 2}, {1, 2}};
 
-//        int course = 0;
-//        int[][] prerequisites =
-//                {{0, 1}};
+//        int courses = 4;
+//        int[][] prerequisites = {{3, 0}, {0, 1}};
 
-        CourseSchedule207 ob = new CourseSchedule207();
-        boolean result = ob.canFinish(course, prerequisites);
-        System.out.println(result);
+        int courses = 3;
+        int[][] prerequisites = {{0, 1}};
+
+//        int[][] prerequisites = {{1, 0}};
+
+        CourseScheduleOrder ob = new CourseScheduleOrder();
+        int[] canFinish = ob.findOrder(courses, prerequisites);
+        System.out.println(Arrays.toString(canFinish));
+
     }
 
-    public boolean canFinish(int numCourses, int[][] prerequisites) {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+
         if (prerequisites.length == 0) {
             int[] courses = new int[numCourses];
 
             for (int i = 0; i < courses.length; i++) {
                 courses[i] = i;
             }
-            return true;
+            return courses;
         }
 
         Map<Integer, List<Integer>> subjectToPreRequistic = new HashMap<>(numCourses);
@@ -67,12 +72,21 @@ public class CourseSchedule207 {
 
             if (!(nodeStatusMap.get(subjectId) == NodeStatus.COMPLETED)) {
                 if (!dfs(subjectId, subjectToPreRequistic, nodeStatusMap, order)) {
-                    return false;
+                    return new int[0];
                 }
             }
         }
 
-        return true;
+        int[] courseOrder = new int[numCourses];
+
+        for (int i = numCourses - 1; i >= 0; i--) {
+
+            if (!order.isEmpty()) {
+                courseOrder[i] = order.pop();
+            }
+        }
+        return courseOrder;
+
     }
 
     private boolean dfs(Integer subjectId, Map<Integer, List<Integer>> subjectToPreRequistic,
@@ -110,4 +124,3 @@ public class CourseSchedule207 {
 
 
 }
-

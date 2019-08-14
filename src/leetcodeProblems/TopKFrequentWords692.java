@@ -35,7 +35,7 @@ public class TopKFrequentWords692 {
         }
 
         Comparator<String> customComp = (s1, s2) -> {
-            int diff =  m.get(s1) - m.get(s2);       // MinHeap
+            int diff =  m.get(s1) - m.get(s2);       // Node
 
             if (diff != 0) {
                 return diff;

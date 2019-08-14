@@ -13,7 +13,8 @@ import java.util.Arrays;
 public class DistanceFromSourceToDestinationInMaze505 {
     public static void main(String[] args) {
 
-        int[][] maze = {{0, 0, 1, 0, 0},
+        int[][] maze = {
+                {0, 0, 1, 0, 0},
                 {0, 0, 0, 0, 0},
                 {0, 0, 0, 1, 0},
                 {1, 1, 0, 1, 1},
@@ -60,14 +61,15 @@ public class DistanceFromSourceToDestinationInMaze505 {
             Arrays.fill(row, Integer.MAX_VALUE);
         }
         int[][] directions = {
-                {0, -1},
-                {0, 1},
-                {-1, 0},
-                {1, 0},
+                {0, -1}, // left
+                {0, 1}, // right
+                {-1, 0}, // up
+                {1, 0},  // down
         };
         distance[start[0]][start[1]] = 0;
         dfs(maze, start, distance, directions);
 
+        // not passing destination coordinates in DFS
         return (distance[destination[0]][destination[1]] == Integer.MAX_VALUE) ? -1 : distance[destination[0]][destination[1]];
     }
 

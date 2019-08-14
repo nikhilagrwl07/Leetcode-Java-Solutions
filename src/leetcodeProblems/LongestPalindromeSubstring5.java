@@ -1,4 +1,5 @@
-package leetcodeProblems;/*
+package leetcodeProblems;
+/*
     Problem -
     Solution -
     Time Complexity -
@@ -6,7 +7,7 @@ package leetcodeProblems;/*
  */
 
 
-public class LongestPalindromeSubstring {
+public class LongestPalindromeSubstring5 {
     public static void main(String[] args) {
         String input = "babad";
 //        String input = "cbbd";

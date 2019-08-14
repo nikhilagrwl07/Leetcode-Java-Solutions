@@ -42,7 +42,6 @@ public class CheckCompletenessofBinaryTree958 {
         if (root == null)
             return true;
 
-
         LinkedList<TreeNodeWithPosition> q = new LinkedList<>();
         int index = 0;
         q.add(new TreeNodeWithPosition(root, 1));

@@ -8,8 +8,6 @@
 
 package mock.microsoft.set1;
 
-import java.util.Stack;
-
 public class FindSmallestElementByRemovingKdigits402 {
     public static void main(String[] args) {
         FindSmallestElementByRemovingKdigits402 ob = new FindSmallestElementByRemovingKdigits402();
@@ -27,39 +25,45 @@ public class FindSmallestElementByRemovingKdigits402 {
 
     public String removeKdigits(String num, int k) {
 
-        if (num.length() == k) {
+        if (num == null || num.isEmpty()) {
             return "0";
         }
 
-        Stack<Character> s = new Stack<>();
-
-
-        for (char c : num.toCharArray()) {
-
-            while (!s.isEmpty() && s.peek() > c && k > 0) {
-                s.pop();
-                k--;
-            }
-            s.push(c);
+        if (k == num.length()) {
+            return "0";
         }
 
-        while (k > 0 && !s.isEmpty()) {
-            s.pop();
+        StringBuilder result = new StringBuilder();
+        result.append(num.charAt(0));
+
+        for (int i = 1; i < num.length(); i++) {
+
+            while (result.length() >= 1 && k > 0 &&
+                    Character.getNumericValue(result.charAt(result.length() - 1)) >
+                            Character.getNumericValue(num.charAt(i))) {
+                result.deleteCharAt(result.length() - 1);
+                k--;
+            }
+            result.append(num.charAt(i));
+        }
+
+        // remove from last of result until k becomes 0
+        while (k > 0) {
+            result.deleteCharAt(result.length() - 1);
             k--;
         }
 
-        StringBuilder sb = new StringBuilder();
-
-        while (!s.isEmpty()) {
-            sb.append(s.pop());
+        // remove an starting zeros
+        int i = 0;
+        while (i < result.length() && result.charAt(i) == '0') {
+            result.deleteCharAt(0);
         }
 
-        while ((sb.length() - 1) >= 0 && sb.charAt(sb.length() - 1) == '0') {
-            sb.deleteCharAt(sb.length() - 1);
+        if (result.length() == 0) {
+            return "0";
         }
 
-        String result = sb.reverse().toString();
-        return result.isEmpty() ? "0" : result;
+        return result.toString();
 
     }
 }

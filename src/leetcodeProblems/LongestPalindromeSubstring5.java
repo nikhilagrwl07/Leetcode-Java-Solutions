@@ -10,6 +10,7 @@ package leetcodeProblems;
 public class LongestPalindromeSubstring5 {
     public static void main(String[] args) {
         String input = "babad";
+//        String input = "babababa";
 //        String input = "cbbd";
 //        String input = "";
 
@@ -20,7 +21,8 @@ public class LongestPalindromeSubstring5 {
         System.out.println(outputAroundCenterApproach);
     }
 
-
+    //Time Complexity - O(N^2)
+    //Space Complexity - O(1)
     private static String longestPalindromeAroundCentreApproach(String s) {
         if (s == null || s.isEmpty())
             return "";
@@ -30,46 +32,57 @@ public class LongestPalindromeSubstring5 {
         }
 
         char[] c = s.toCharArray();
-        String longestPalindromeSubstring = String.valueOf(c[0]);
+        Integer lowerIndex = null;
+        Integer upperIndex = null;
 
-        // ODD Case
 
         for (int i = 1; i <= c.length - 1; i++) {
+
+            // ODD Case
             int left = i - 1, right = i + 1;
             while (isSafe(left, c) && isSafe(right, c) && c[left] == c[right]) {
-                String ss = s.substring(left, right + 1);
-                if (ss.length() > longestPalindromeSubstring.length()) {
-                    longestPalindromeSubstring = ss;
+
+                if (lowerIndex == null || (right - left + 1 > upperIndex - lowerIndex + 1)) {
+                    lowerIndex = left;
+                    upperIndex = right;
                 }
                 left--;
                 right++;
             }
 
-        }
 
-        // EVEN Case
-        for (int i = 1; i <= c.length - 1; i++) {
-            int centerLeft = i-1, centerRight = i;
+            // EVEN Case
+            left = i - 1;
+            right = i;
 
-            if(isSafe(centerLeft, c) && isSafe(centerRight, c) && c[centerLeft] == c[centerRight]){
+            if (isSafe(left, c) && isSafe(right, c) && c[left] == c[right]) {
 
-                if (centerRight-centerLeft+1 > longestPalindromeSubstring.length()) {
-                    longestPalindromeSubstring = s.substring(centerLeft, centerRight+1);;
+                if (lowerIndex == null || (right - left + 1 > upperIndex - lowerIndex + 1)) {
+                    lowerIndex = left;
+                    upperIndex = right;
                 }
 
 
-                int left = centerLeft - 1, right = centerRight + 1;
+                left = left - 1;
+                right = right + 1;
                 while (isSafe(left, c) && isSafe(right, c) && c[left] == c[right]) {
-                    String ss = s.substring(left, right + 1);
-                    if (ss.length() > longestPalindromeSubstring.length()) {
-                        longestPalindromeSubstring = ss;
+
+                    if (right - left + 1 > upperIndex - lowerIndex + 1) {
+                        lowerIndex = left;
+                        upperIndex = right;
                     }
                     left--;
                     right++;
                 }
             }
+
         }
-        return longestPalindromeSubstring;
+
+        if (lowerIndex == null) {
+            return s.substring(0, 1);
+        }
+
+        return s.substring(lowerIndex, upperIndex + 1);
     }
 
     private static boolean isSafe(int i, char[] c) {

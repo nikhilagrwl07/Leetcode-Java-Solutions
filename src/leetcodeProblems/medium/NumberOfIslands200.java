@@ -1,4 +1,4 @@
-package leetcodeProblems;/*
+package leetcodeProblems.medium;/*
     Problem -
     Solution -
     Time Complexity -
@@ -9,7 +9,7 @@ package leetcodeProblems;/*
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class NumberOfIslands {
+public class NumberOfIslands200 {
     public static void main(String[] args) {
 //        char[][] grid = {
 //                {
@@ -27,10 +27,10 @@ public class NumberOfIslands {
 //        };
 
         char[][] grid =
-        {{'1','1','0','0','0'},
-        {'1','1','0','0','0'},
-        {'0','0','1','0','0'},
-        {'0','0','0','1','1'}};
+                {{'1', '1', '0', '0', '0'},
+                        {'1', '1', '0', '0', '0'},
+                        {'0', '0', '1', '0', '0'},
+                        {'0', '0', '0', '1', '1'}};
 
         int countOfIslands = numIslands(grid);
         System.out.println(countOfIslands);
@@ -38,7 +38,7 @@ public class NumberOfIslands {
 
     public static int numIslands(char[][] grid) {
 
-        if(grid == null || grid.length==0)
+        if (grid == null || grid.length == 0)
             return 0;
 
 
@@ -61,43 +61,43 @@ public class NumberOfIslands {
 
 
     private static int bfs(char[][] grid) {
-
         int islandCount = 0;
-        Queue<Coordinate> queue = new LinkedList<>();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
+        Queue<Integer> queue = new LinkedList<>();
+        int numberOfRows = grid.length;
+        int numberOfColumns = grid[0].length;
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
 
-                if(grid[i][j] == '1')
-                {
+                if (grid[r][c] == '1') {
 
                     // mark is as visited by replacing it with '0'
-                    grid[i][j] = '0';
+                    grid[r][c] = '0';
                     islandCount++;
-                    queue.add(new Coordinate(i, j));
+                    queue.add(r * numberOfColumns + c);
 
-                    while(!queue.isEmpty()){
-                        Coordinate coordinate = queue.remove();
-                        int x = coordinate.getX();
-                        int y = coordinate.getY();
+                    while (!queue.isEmpty()) {
+                        Integer coordinate = queue.remove();
+                        int x = coordinate / numberOfColumns;
+                        int y = coordinate % numberOfColumns;
 
-                        if(isSafe(x+1, y, grid) && grid[x+1][y] == '1'){
-                            grid[x+1][y] = '0';
-                            queue.add(new Coordinate(x+1, y));
+                        if (isSafe(x + 1, y, grid) && grid[x + 1][y] == '1') {
+                            grid[x + 1][y] = '0';
+                            queue.add((x+1) * numberOfColumns + y);
                         }
 
-                        if(isSafe(x-1, y, grid) && grid[x-1][y] == '1'){
-                            grid[x-1][y] = '0';
-                            queue.add(new Coordinate(x-1, y));
+                        if (isSafe(x - 1, y, grid) && grid[x - 1][y] == '1') {
+                            grid[x - 1][y] = '0';
+                            queue.add((x - 1) * numberOfColumns + y);
                         }
 
-                        if(isSafe(x, y-1, grid) && grid[x][y-1] == '1'){
-                            grid[x][y-1] = '0';
-                            queue.add(new Coordinate(x, y-1));
+                        if (isSafe(x, y - 1, grid) && grid[x][y - 1] == '1') {
+                            grid[x][y - 1] = '0';
+                            queue.add(x * numberOfColumns + (y - 1));
                         }
 
-                        if(isSafe(x, y+1, grid) && grid[x][y+1] == '1'){
-                            grid[x][y+1] = '0';
-                            queue.add(new Coordinate(x, y+1));
+                        if (isSafe(x, y + 1, grid) && grid[x][y + 1] == '1') {
+                            grid[x][y + 1] = '0';
+                            queue.add(x * numberOfColumns + (y + 1));
                         }
                     }
                 }
@@ -149,28 +149,7 @@ public class NumberOfIslands {
     }
 
     private static boolean isSafe(int x, int y, char[][] grid) {
-        if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length)
-            return false;
-
-        return true;
-
-    }
-
-    static class Coordinate{
-        int x , y;
-
-        public Coordinate(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
+        return x >= 0 && y >= 0 && x < grid.length && y < grid[0].length;
     }
 }
 

@@ -8,7 +8,7 @@ public class FindAllPermutationOfString {
     public static void main(String[] args) {
 
         FindAllPermutationOfString ob = new FindAllPermutationOfString();
-        String input = "ABC";
+        String input = "AAB";
 
         List<String> permutations = ob.permutations(input);
         System.out.println(permutations);
@@ -16,20 +16,25 @@ public class FindAllPermutationOfString {
 
     public List<String> permutations(String input) {
         List<String> result = new ArrayList<>();
-        permutationRecursion(input.toCharArray(), result, 0);
+        permutationRecursion(input.toCharArray(), result, 0, input.length() - 1);
         return result;
     }
 
-    public void permutationRecursion(char[] input, List<String> result, int index) {
-        if (index >= input.length) {
+    public void permutationRecursion(char[] input, List<String> result, int left, int right) {
+        if (left == right) {
+            String ans = String.valueOf(input);
+
+            if(!result.contains(ans)){
+                result.add(ans);
+            }
             return;
         }
 
-        for (int candidate = index; candidate < input.length; candidate++) {
-            swap(input, index, candidate);
-            result.add(Arrays.toString(input));
-            permutationRecursion(input, result, candidate+1);
-            swap(input, index, candidate);
+        for (int candidate = left; candidate <= right; candidate++) {
+
+            swap(input, left, candidate);
+            permutationRecursion(input, result, left+1, right);
+            swap(input, left, candidate);
         }
     }
 

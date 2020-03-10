@@ -5,9 +5,14 @@ import java.util.*;
 public class WordLadder126 {
     public static void main(String[] args) {
 
-        String beginWord = "hit";
-        String endWord = "cog";
-        List<String> wordList = Arrays.asList("hot", "dot", "dog", "lot", "log", "cog");
+//        String beginWord = "hit";
+//        String endWord = "cog";
+//        List<String> wordList = Arrays.asList("hot","het", "dot", "dog", "lot", "log", "cog");
+
+        String beginWord = "red";
+        String endWord = "tax";
+        List<String> wordList = Arrays.asList("ted", "tex", "red", "tax", "tad", "den", "rex", "pee");
+//        [[red, ted, tad, tax], [red, ted, tex, tax], [red, rex, tex, tax]]
 
 //        String beginWord = "a";
 //        String endWord = "c";
@@ -18,124 +23,87 @@ public class WordLadder126 {
         System.out.println(ladders);
     }
 
+    public List<List<String>> findLadders(String start, String end, List<String> wordList) {
+        HashSet<String> dict = new HashSet<String>(wordList);
+        List<List<String>> res = new ArrayList<List<String>>();
+        HashMap<String, ArrayList<String>> nodeNeighbors = new HashMap<String, ArrayList<String>>();// Neighbors for every node
+        HashMap<String, Integer> distance = new HashMap<String, Integer>();// Distance of every node from the start node
+        ArrayList<String> solution = new ArrayList<String>();
 
-    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        dict.add(start);
+        bfs(start, end, dict, nodeNeighbors, distance);
+        dfs(start, end, dict, nodeNeighbors, distance, solution, res);
+        return res;
+    }
 
+    // BFS: Trace every node's distance from the start node (level by level).
+    private void bfs(String start, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance) {
+        for (String str : dict)
+            nodeNeighbors.put(str, new ArrayList<String>());
 
-        Map<String, Integer> distance = new HashMap<>();
-        Map<String, List<String>> transformation = new HashMap<>();
+        Queue<String> queue = new LinkedList<String>();
+        queue.offer(start);
+        distance.put(start, 0);
 
-        //BFS
-        Queue<String> q = new LinkedList<>();
-        q.add(beginWord);
-        distance.put(beginWord, 1);
-        Map<String, List<String>> genericWordToRealWords = preProcessWordList(wordList);
-        Set<String> isVisited = new HashSet<>();
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            boolean foundEnd = false;
+            for (int i = 0; i < count; i++) {
+                String cur = queue.poll();
+                int curDistance = distance.get(cur);
+                ArrayList<String> neighbors = getNeighbors(cur, dict);
 
-
-        while (!q.isEmpty()) {
-
-            String word = q.remove();
-            if (word.equals(endWord)) {
-                continue;
-            }
-
-            for (int index = 0; index < word.length(); index++) {
-
-                String genericWord = word.substring(0, index) + "*" + word.substring(index + 1);
-                List<String> realWords = genericWordToRealWords.getOrDefault(genericWord, new ArrayList<>());
-
-                for (String s : realWords) {
-                    if (!isVisited.contains(s)) {
-                        q.add(s);
-                        distance.put(s, distance.get(word) + 1);
-
-                        List<String> orDefault = transformation.getOrDefault(word, new ArrayList<>());
-                        if (!orDefault.contains(s) && !s.equals(word)) {
-                            orDefault.add(s);
-                            transformation.put(word, orDefault);
-                        }
-
+                for (String neighbor : neighbors) {
+                    nodeNeighbors.get(cur).add(neighbor);
+                    if (!distance.containsKey(neighbor)) {// Check if visited
+                        distance.put(neighbor, curDistance + 1);
+                        if (end.equals(neighbor))// Found the shortest path
+                            foundEnd = true;
+                        else
+                            queue.offer(neighbor);
                     }
                 }
-
             }
-            isVisited.add(word);
+
+            if (foundEnd)
+                break;
         }
-
-
-        isVisited.clear();
-        collectAllPath(beginWord, endWord, transformation, 0, new ArrayList<>(), isVisited);
-        return collectShortestPath(ans);
-
     }
 
-    List<List<String>> ans = new ArrayList<>();
+    // Find all next level nodes.
+    private ArrayList<String> getNeighbors(String node, Set<String> dict) {
+        ArrayList<String> res = new ArrayList<String>();
+        char chs[] = node.toCharArray();
 
-    private List<List<String>> collectShortestPath(List<List<String>> ans) {
-
-        int minLength = Integer.MAX_VALUE;
-
-        for (List<String> l : ans) {
-            minLength = Math.min(minLength, l.size());
-        }
-        List<List<String>> finalAns = new ArrayList<>();
-
-        for (List<String> l : ans) {
-            if (l.size() == minLength) {
-                finalAns.add(l);
-            }
-        }
-        return finalAns;
-    }
-
-
-    private void collectAllPath(String beginWord, String endWord, Map<String, List<String>> transformation,
-                                int index, List<String> result, Set<String> isVisited) {
-
-        if (isVisited.contains(beginWord))
-            return;
-
-        result.add(index, beginWord);
-
-        if (beginWord.equals(endWord)) {
-            List<String> cloned_list = new ArrayList<>(result.subList(0, index + 1));
-            ans.add(cloned_list);
-            return;
-        }
-
-        if (transformation.get(beginWord) != null) {
-            List<String> nextWord = transformation.get(beginWord);
-
-            for (String w : nextWord) {
-                collectAllPath(w, endWord, transformation, index + 1, result, isVisited);
-            }
-        }
-        isVisited.add(beginWord);
-
-    }
-
-
-    private Map<String, List<String>> preProcessWordList(List<String> wordList) {
-
-        Map<String, List<String>> genericWordToRealWord = new HashMap<>();
-        // genericWord to real word mapping
-
-        for (String word : wordList) {
-
-            for (int index = 0; index <= word.length() - 1; index++) {
-                String genericWord = word.substring(0, index) + "*" + word.substring(index + 1);
-                List<String> orDefault = genericWordToRealWord.getOrDefault(genericWord, new ArrayList<>());
-                if (!orDefault.contains(word)) {
-                    orDefault.add(word);
+        for (char ch = 'a'; ch <= 'z'; ch++) {
+            for (int i = 0; i < chs.length; i++) {
+                if (chs[i] == ch) continue;
+                char old_ch = chs[i];
+                chs[i] = ch;
+                if (dict.contains(String.valueOf(chs))) {
+                    res.add(String.valueOf(chs));
                 }
-                genericWordToRealWord.put(genericWord, orDefault);
+                chs[i] = old_ch;
             }
-        }
 
-        return genericWordToRealWord;
+        }
+        return res;
     }
 
+    // DFS: output all paths with the shortest distance.
+    private void dfs(String cur, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance, ArrayList<String> solution, List<List<String>> res) {
+        solution.add(cur);
+        if (end.equals(cur)) {
+            res.add(new ArrayList<String>(solution));
+        } else {
+            for (String next : nodeNeighbors.get(cur)) {
+                if (distance.get(next) == distance.get(cur) + 1) {
+                    dfs(next, end, dict, nodeNeighbors, distance, solution, res);
+                }
+            }
+        }
+        solution.remove(solution.size() - 1);
+    }
 }
 
 

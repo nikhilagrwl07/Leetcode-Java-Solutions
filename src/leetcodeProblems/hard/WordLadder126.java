@@ -1,4 +1,4 @@
-package leetcodeProblems;
+package leetcodeProblems.hard;
 
 import java.util.*;
 

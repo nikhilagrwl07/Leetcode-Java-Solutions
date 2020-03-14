@@ -34,7 +34,6 @@ public class WallsAndGates286 {
 
         for (int r = 0; r < rooms.length; r++) {
             for (int c = 0; c < rooms[0].length; c++) {
-
                 if (rooms[r][c] == 0) { // gate found so
                     dfs(rooms, r, c, 0);
                 }

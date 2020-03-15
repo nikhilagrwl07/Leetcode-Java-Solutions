@@ -1,9 +1,6 @@
 package mock.amazon.set1;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class LevelOrderTraversal {
     public static void main(String[] args) {
@@ -11,44 +8,38 @@ public class LevelOrderTraversal {
 
     }
 
+
+    // DFS approach
     public List<List<Integer>> levelOrder(TreeNode root) {
-
-        List<List<Integer>> result = new LinkedList<>();
-
         if (root == null)
-            return result;
+            return new ArrayList<>();
 
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
-        q.add(null);
+        TreeMap<Integer, List<Integer>> depthToNodeMap = new TreeMap<>();
 
-        List<TreeNode> tmp = new ArrayList<>();
-        while (!q.isEmpty()) {
+        Stack<Integer> depthStack = new Stack<>();
+        Stack<TreeNode> nodeStack = new Stack<>();
+        depthStack.push(0);
+        nodeStack.push(root);
 
-            TreeNode node = q.remove();
+        while (!nodeStack.isEmpty()) {
+            TreeNode poppedNode = nodeStack.pop();
+            Integer depth = depthStack.pop();
 
-            if (node == null) {
-                List<Integer> t = new LinkedList<>();
+            depthToNodeMap.computeIfAbsent(depth, integer -> new LinkedList<>()).add(poppedNode.val);
 
-                while (!tmp.isEmpty()) {
-                    t.add(tmp.remove(0).val);
-                }
-                result.add(t);
-                q.add(null);
-
-                if(q.peek()==null)
-                    break;
-            } else {
-
-                tmp.add(node);
-
-                if (node.left != null)
-                    q.add(node.left);
-                if (node.right != null)
-                    q.add(node.right);
+            if (poppedNode.right != null) {
+                depthStack.push(depth + 1);
+                nodeStack.push(poppedNode.right);
             }
+
+            if (poppedNode.left != null) {
+                depthStack.push(depth + 1);
+                nodeStack.push(poppedNode.left);
+            }
+
         }
-        return result;
+
+        return new ArrayList<>(depthToNodeMap.values());
     }
 
     static class TreeNode {

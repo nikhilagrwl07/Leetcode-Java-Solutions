@@ -1,10 +1,4 @@
-package leetcodeProblems;/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
+package leetcodeProblems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +8,8 @@ import java.util.List;
 public class SchedulingMeetingInRoom253 {
     public static void main(String[] args) {
 //        int[][] meeting = {{0, 30}, {15, 20}, {5, 10}};
-//        int[][] meeting = {{7,10}, {2, 4}};
-        int[][] meeting = {{5,8}, {6, 8}};
+        int[][] meeting = {{7,10}, {2, 4}};
+//        int[][] meeting = {{5,8}, {6, 8}};
 //        int[][] meeting = {{1,5}, {8, 9}, {8, 9}};
 //        int[][] meeting = {{13, 15}, {1, 13}};
 //        int[][] meeting = {{2,15},{36,45},{9,29},{16,23},{4,9}};
@@ -26,150 +20,57 @@ public class SchedulingMeetingInRoom253 {
         System.out.println(minMeetingRooms);
     }
 
-
+    //Approach - Chronological order sorting
+    // Time Complexity - O(Nlogn)
+    // Space Complexity - O(N)
     public int minMeetingRooms(int[][] intervals) {
-        if (intervals.length == 0 || intervals.length == 1) {
-            return intervals.length;
+        if (intervals == null || intervals.length == 0)
+            return 0;
+
+        int[] start = new int[intervals.length];
+        int[] end = new int[intervals.length];
+
+        int counter = 0;
+        for (int[] i : intervals) {
+            start[counter] = i[0];
+            end[counter] = i[1];
+            counter++;
         }
+        Arrays.sort(start);
+        Arrays.sort(end);
 
-        Arrays.sort(intervals, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                return o1[0] - o2[0];
-            }
-        });
+        int room = 1;
+        int s = 1;
+        int e = 0;
 
-        MinHeap minHeap = new MinHeap();
-        minHeap.insert(new Schedule(intervals[0][0], intervals[0][1])); // first end time inserted
-
-
-        for (int i = 1; i <= intervals.length-1; i++) {
-
-            Schedule newSchedule = new Schedule(intervals[i][0], intervals[i][1]);
-            if(isTopRoomFreee(minHeap, newSchedule)){
-                minHeap.deleteAndInsertAtTop(newSchedule);
-            }
-            else{
-                minHeap.insert(newSchedule);
+        for (; s < start.length; s++) {
+            if (start[s] < end[e]) {
+                room++;
+            } else {
+                e++;
             }
         }
-
-        return minHeap.getRoomCount();
+        return room;
     }
 
-    private boolean isTopRoomFreee(MinHeap minHeap, Schedule newSchedule) {
-        Schedule top = minHeap.getTop();
-        return top.getStartTime() >= newSchedule.getEndTime() || top.getEndTime() <= newSchedule.getStartTime();
-    }
-
-    class MinHeap {
-
-        List<Schedule> schedules;
-
-        public MinHeap() {
-            this.schedules = new ArrayList<>();
-        }
-
-        private int getRoomCount(){
-            return schedules.size();
-        }
-
-        private Schedule getTop() {
-            return schedules.get(0);
-        }
-
-        private void deleteAndInsertAtTop(Schedule schedule) {
-            schedules.set(0, schedule);
-            heapifyTopDown(0);
-        }
-
-        private void insert(Schedule newEndTime) {
-            schedules.add(newEndTime);
-            heapifybottomUp(newEndTime);
-        }
-
-        private void heapifybottomUp(Schedule schedule) {
-
-            int indexOfNewEndTime = schedules.indexOf(schedule);
-            int parent = getParent(indexOfNewEndTime);
-
-            while (parent >= 0 && schedules.get(indexOfNewEndTime).getEndTime() < schedules.get(parent).getEndTime()) {
-                swap(indexOfNewEndTime, parent);
-                indexOfNewEndTime = parent;
-                parent = getParent(indexOfNewEndTime);
-            }
-
-        }
-
-        private void heapifyTopDown(int index) {
-
-            int indexOfNewEndTime = index;
-            int left = getLeft(indexOfNewEndTime);
-            int right = getRight(indexOfNewEndTime);
-
-            int minIndex = indexOfNewEndTime;
-
-
-            if (left <= schedules.size() - 1) {
-                if (schedules.get(minIndex).getEndTime() > schedules.get(left).getEndTime()) {
-                    minIndex = left;
-                }
-            }
-
-            if (right <= schedules.size() - 1) {
-                if (schedules.get(minIndex).getEndTime() > schedules.get(right).getEndTime()) {
-                    minIndex = right;
-                }
-            }
-
-            if (minIndex != indexOfNewEndTime) {
-                swap(minIndex, indexOfNewEndTime);
-                heapifyTopDown(minIndex);
-            }
-        }
-
-        private void swap(int i1, int i2) {
-            Schedule t = schedules.get(i1);
-            schedules.set(i1, schedules.get(i2));
-            schedules.set(i2, t);
-        }
-
-        private int getLeft(int index) {
-            return 2 * index + 1;
-        }
-
-        private int getRight(int index) {
-            return 2 * index + 2;
-        }
-
-        private int getParent(int index) {
-            return (index - 1) / 2;
-        }
-    }
-
-    static class Schedule{
-        int startTime;
-        int endTime;
-
-        public Schedule(int startTime, int endTime) {
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-
-        public int getStartTime() {
-            return startTime;
-        }
-
-        public void setStartTime(int startTime) {
-            this.startTime = startTime;
-        }
-
-        public int getEndTime() {
-            return endTime;
-        }
-
-        public void setEndTime(int endTime) {
-            this.endTime = endTime;
-        }
-    }
+    //Approach - Heap
+    // Time Complexity - O(Nlogn)
+    // Space Complexity - O(N)
+//    public int minMeetingRooms(int[][] intervals) {
+//        if (intervals == null || intervals.length == 0)
+//            return 0;
+//
+//        Arrays.sort(intervals, (o1, o2) -> o1[0]-o2[0]);
+//
+//        Queue<Integer> minHeap = new PriorityQueue<>(Comparator.comparingInt(o -> o));
+//
+//        for (int[] l : intervals) {
+//            Integer latestEndTime = minHeap.peek();
+//            if (latestEndTime != null && latestEndTime <= l[0]) {
+//                minHeap.poll();
+//            }
+//            minHeap.offer(l[1]);
+//        }
+//        return minHeap.size();
+//    }
 }

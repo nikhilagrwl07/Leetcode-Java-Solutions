@@ -1,12 +1,6 @@
-package leetcodeProblems;/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
+package leetcodeProblems;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -26,77 +20,48 @@ public class MedianOfStreamData295 {
     }
 }
 
-
 class MedianFinder {
-    Queue<Integer> maxHeap;
     Queue<Integer> minHeap;
+    Queue<Integer> maxHeap;
 
     public MedianFinder() {
-
-//        Comparator<Integer> min = new Comparator<Integer>() {
-//            @Override
-//            public int compare(Integer o1, Integer o2) {
-//                return o1 - o2;
-//            }
-//        };
-//
-//        Comparator<Integer> max = new Comparator<Integer>() {
-//            @Override
-//            public int compare(Integer o1, Integer o2) {
-//                return o2 - o1;
-//            }
-//        };
-
-        this.maxHeap = new PriorityQueue<>(Collections.reverseOrder()); // reverse order means maxHeap
-        this.minHeap = new PriorityQueue<>();   //default is minheap
+        minHeap = new PriorityQueue<>();
+        maxHeap = new PriorityQueue<>(Collections.reverseOrder());
     }
 
-    public double findMedian() {
+    // Time - O(Log n) where n is total number of elements
+    // Space - O(n)
+    public void addNum(int num) {
 
-        if (minHeap.size() > maxHeap.size()) {
-            return minHeap.peek();
-        }
-
-        if (minHeap.size() < maxHeap.size()) {
-            return maxHeap.peek();
-        }
-
-        return (minHeap.peek() + maxHeap.peek()) / 2.0;
-    }
-
-    public void addNum(int element) {
-
-        // first element insertion
-        if (minHeap.isEmpty() && maxHeap.isEmpty()) {
-            maxHeap.add(element);
+        //first element
+        if (maxHeap.isEmpty()) {
+            maxHeap.offer(num);
             return;
         }
 
-        if (maxHeap.size() > minHeap.size()) {
-
-            if (element > findMedian()) {
-                minHeap.add(element);
-            } else {
-
-                int maxElement = maxHeap.poll();
-                minHeap.add(maxElement);
-                maxHeap.add(element);
-            }
-        } else if (maxHeap.size() < minHeap.size()) {
-
-            if (element > findMedian()) {
-                int minElement = minHeap.poll();
-                maxHeap.add(minElement);
-                minHeap.add(element);
-            } else {
-                maxHeap.add(element);
-            }
+        if (num <= findMedian()) {
+            maxHeap.offer(num);
         } else {
-            if (element > findMedian()) {
-                minHeap.add(element);
-            } else {
-                maxHeap.add(element);
-            }
+            minHeap.offer(num);
+        }
+        balance();
+    }
+
+    public double findMedian() {
+        if (minHeap.size() > maxHeap.size())
+            return minHeap.peek();
+
+        if (minHeap.size() < maxHeap.size())
+            return maxHeap.peek();
+
+        return (minHeap.peek() + maxHeap.peek()) / 2d;
+    }
+
+    public void balance() {
+        if (minHeap.size() - maxHeap.size() >= 2) {
+            maxHeap.offer(minHeap.poll());
+        } else if (maxHeap.size() - minHeap.size() >= 2) {
+            minHeap.offer(maxHeap.poll());
         }
     }
 }

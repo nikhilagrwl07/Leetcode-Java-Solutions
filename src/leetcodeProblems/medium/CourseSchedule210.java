@@ -6,7 +6,7 @@
  */
 
 
-package leetcodeProblems;
+package leetcodeProblems.medium;
 
 import java.util.*;
 
@@ -38,7 +38,70 @@ public class CourseSchedule210 {
     }
 
 
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
+    public int[] findOrder(int course, int[][] prerequisites) {
+        Map<Integer, Node> graph = new HashMap<>(course);
+
+        LinkedList<Integer> nodesWithIndegreeZero = new LinkedList<>();
+
+        for (int i = 0; i < course; i++) {
+            graph.put(i, new Node());
+        }
+
+        for (int[] pre : prerequisites) {
+            graph.get(pre[1]).addNeighbour(pre[0]);
+            graph.get(pre[0]).incrementIndegree();
+        }
+
+        for (int c = 0; c < course; c++) {
+            if (graph.get(c).indegree == 0)
+                nodesWithIndegreeZero.offer(c);
+        }
+
+        int inputEdgeCount = prerequisites.length;
+        int currentEdgeCount = 0;
+
+        int[] orderOfCourse = new int[course];
+        int index = 0;
+        while (!nodesWithIndegreeZero.isEmpty()) {
+            Integer startNode = nodesWithIndegreeZero.pop();
+            orderOfCourse[index++] = startNode;
+
+            Node node = graph.get(startNode);
+
+            for (Integer next : node.next) {
+                graph.get(next).decrementIndegree();
+                currentEdgeCount++;
+
+                if (graph.get(next).indegree == 0) {
+                    nodesWithIndegreeZero.offer(next);
+                }
+            }
+
+        }
+        if (inputEdgeCount != currentEdgeCount)
+            return new int[0];
+
+        return orderOfCourse;
+    }
+
+    static class Node {
+        List<Integer> next = new ArrayList<>();
+        int indegree = 0;
+
+        public void addNeighbour(Integer neighbour) {
+            next.add(neighbour);
+        }
+
+        public void incrementIndegree() {
+            indegree++;
+        }
+
+        public void decrementIndegree() {
+            indegree--;
+        }
+    }
+
+    public int[] findOrderUsingDFS(int numCourses, int[][] prerequisites) {
 
         if (prerequisites.length == 0) {
             int[] courses = new int[numCourses];

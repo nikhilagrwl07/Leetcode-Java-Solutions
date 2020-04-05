@@ -19,12 +19,18 @@ public class ApplyDiscountOnPrice {
 
         StringBuilder sb = new StringBuilder(input);
 
-        // assuming last value from $ from end is price
+        // assuming last value from $ from end is givenPrice
         int index = sb.lastIndexOf("$");
-        BigDecimal discountFactor = new BigDecimal(1).subtract(discountPercent.divide(new BigDecimal(100)));
-        BigDecimal price = new BigDecimal(sb.substring(index + 1, sb.length() - 1));
 
-        BigDecimal newPrice = price.multiply(discountFactor).setScale(2, RoundingMode.CEILING);
+        if (index == -1) {
+            return "";
+        }
+
+        BigDecimal discountFactor = new BigDecimal(1).subtract(discountPercent.divide(new BigDecimal(100)));
+
+        BigDecimal givenPrice = new BigDecimal(sb.substring(index + 1, sb.length() - 1));
+
+        BigDecimal newPrice = givenPrice.multiply(discountFactor).setScale(2, RoundingMode.CEILING);
         sb.replace(index + 1, sb.length() - 1, String.valueOf(newPrice));
         return sb.toString();
     }

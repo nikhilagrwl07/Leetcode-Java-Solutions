@@ -7,14 +7,17 @@
 3. https://leetcode.com/problems/uncrossed-lines/
 4. https://leetcode.com/problems/minimum-window-substring/
 5. https://leetcode.com/problems/longest-absolute-file-path/
-6. https://leetcode.com/problems/trapping-rain-water/
+6. https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/
+7. https://leetcode.com/problems/convert-bst-to-greater-tree/
+8. https://leetcode.com/problems/combination-sum/
 
 
 **Coding Questions still not clear to me (Need to revisit) -**
 
 1. https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/  
 2. https://leetcode.com/problems/knight-dialer/
+3. https://leetcode.com/problems/word-ladder-ii/
 
 **OOD -** 
 
-https://lewetcode.com/discuss/interview-question/125113/design-a-snake-ladder-game
+https://leetcode.com/discuss/interview-question/125113/design-a-snake-ladder-game

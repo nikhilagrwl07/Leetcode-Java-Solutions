@@ -11,6 +11,7 @@ import java.util.Queue;
 
 public class NumberOfIslands200 {
     public static void main(String[] args) {
+        NumberOfIslands200 ob = new NumberOfIslands200();
 //        char[][] grid = {
 //                {
 //                        '1', '1', '1', '1', '0'
@@ -32,33 +33,45 @@ public class NumberOfIslands200 {
                         {'0', '0', '1', '0', '0'},
                         {'0', '0', '0', '1', '1'}};
 
-        int countOfIslands = numIslands(grid);
+        int countOfIslands = ob.numIslands(grid);
         System.out.println(countOfIslands);
     }
 
-    public static int numIslands(char[][] grid) {
-
+    // DFS using explicit stack
+    public int numIslands(char[][] grid) {
         if (grid == null || grid.length == 0)
             return 0;
 
-
         // BFS approach
-        return bfs(grid);
+//        return bfs(grid);
 
+        int count = 0;
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == '1') {
+                    count++;
+                    dfs(r, c, grid);
+                }
+            }
+        }
 
-        // DFS approach
-
-//        int islandCount = 0;
-//        for (int i = 0; i < grid.length; i++) {
-//            for (int j = 0; j < grid[0].length; j++) {
-//                if (dfsModified(i, j, grid))
-//                    islandCount++;
-//            }
-//        }
-//        return islandCount;
-
+        return count;
     }
 
+    // Time - O(Row* Column)
+    // Space - O(Longest path of a given island which could be Row * Column)
+    private void dfs(int r, int c, char[][] grid) {
+        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length || grid[r][c] == '0')
+            return;
+
+        grid[r][c] = '0';
+
+        // push all children to stack
+        dfs(r - 1, c, grid);
+        dfs(r + 1, c, grid);
+        dfs(r, c - 1, grid);
+        dfs(r, c + 1, grid);
+    }
 
     private static int bfs(char[][] grid) {
         int islandCount = 0;
@@ -104,48 +117,6 @@ public class NumberOfIslands200 {
             }
         }
         return islandCount;
-    }
-
-    //Time Complexity - O(N^2)
-    //Space Complexity - O(1)
-    private static boolean dfsModified(int x, int y, char[][] grid) {
-        if (!isSafe(x, y, grid) || grid[x][y] == '0')
-            return false;
-
-        // mark x and y as visited
-        grid[x][y] = '0';
-//        isVisited[x][y] = true;
-
-        // up
-        dfsModified(x - 1, y, grid);
-        // down
-        dfsModified(x + 1, y, grid);
-        //left
-        dfsModified(x, y - 1, grid);
-        //right
-        dfsModified(x, y + 1, grid);
-        return true;
-    }
-
-
-    //Time Complexity - O(N^2)
-    //Space Complexity - O(N^2)
-    private static boolean dfs(int x, int y, char[][] grid, boolean[][] isVisited) {
-        if (!isSafe(x, y, grid) || isVisited[x][y] || grid[x][y] == '0')
-            return false;
-
-        // mark x and y as visited
-        isVisited[x][y] = true;
-
-        // up
-        dfs(x - 1, y, grid, isVisited);
-        // down
-        dfs(x + 1, y, grid, isVisited);
-        //left
-        dfs(x, y - 1, grid, isVisited);
-        //right
-        dfs(x, y + 1, grid, isVisited);
-        return true;
     }
 
     private static boolean isSafe(int x, int y, char[][] grid) {

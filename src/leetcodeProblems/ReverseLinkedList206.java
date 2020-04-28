@@ -17,46 +17,45 @@ public class ReverseLinkedList206 {
 
     }
 
-    // Iterative approach
-    public ListNode reverseList(ListNode head) {
-        if (head == null || head.next == null)
-            return head;
-
-        ListNode previous = null;
-        while (head != null) {
-            ListNode tmp = head.next;
-            head.next = previous;
-            previous = head;
-            head = tmp;
-        }
-        return previous;
+    // recursive
+    public ListNode reverseListRecusrive(ListNode h) {
+        ListNode[] result = new ListNode[1];
+        dfs(null, h, result);
+        return result[0];
     }
 
+    private void dfs(ListNode previous, ListNode head, ListNode[] result) {
+        if (head == null) {
+            result[0] = previous;
+            return;
+        }
+        System.out.print(head.val + " ");
 
-//    ListNode reveresedHead = null;
-    // recursive approach
-//    public ListNode reverseList(ListNode head) {
-//        if (head == null || head.next == null)
-//            return head;
-//
-//        reverseListUtil(head, null);
-//        return reveresedHead;
-//    }
-//
-//    public ListNode reverseListUtil(ListNode head, ListNode previous) {
-//
-//        if (head == null)
-//            return null;
-//
-//        ListNode tmp = head.next;
-//        head.next = previous;
-//        ListNode listNode = reverseListUtil(tmp, head);
-//        if(listNode==null){
-//            reveresedHead = head;
-//        }
-//        return head;
-//    }
+        ListNode remainingList = head.next;
+        head.next = previous;
 
+        dfs(head, remainingList, result);
+    }
+
+    // iterative
+    public ListNode reverseList(ListNode h) {
+        if (h == null || h.next == null)
+            return h;
+
+        ListNode previous = null, head = h, next = head.next;
+
+        while (next != null) {
+            //step 1
+            head.next = previous;
+
+            //step 2
+            previous = head;
+            head = next;
+            next = next.next;
+        }
+        head.next = previous;
+        return head;
+    }
 
     public static class ListNode {
         int val;

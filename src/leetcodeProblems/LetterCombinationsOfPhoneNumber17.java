@@ -16,40 +16,44 @@ public class LetterCombinationsOfPhoneNumber17 {
     }
 
     public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty())
+            return new ArrayList<>();
 
         List<String> result = new ArrayList<>();
-        Map<Character, String> map = new HashMap<>(8);
-        map.put('2', "abc");
-        map.put('3', "def");
-        map.put('4', "ghi");
-        map.put('5', "jkl");
-        map.put('6', "mno");
-        map.put('7', "pqrs");
-        map.put('8', "tuv");
-        map.put('9', "wxyz");
+        Map<Integer, String> dialpad = new HashMap<>(8);
+        dialpad.put(2, "abc");
+        dialpad.put(3, "def");
+        dialpad.put(4, "ghi");
+        dialpad.put(5, "jkl");
+        dialpad.put(6, "mno");
+        dialpad.put(7, "pqrs");
+        dialpad.put(8, "tuv");
+        dialpad.put(9, "wxyz");
 
-        char[] currentList = new char[digits.length()];
-        dfs(digits.toCharArray(), 0, currentList, result, map);
+        List<String> input = new ArrayList<>();
+        char[] comb = new char[digits.length()];
+
+        for (int i = 0; i < digits.length(); i++) {
+            input.add(dialpad.get(Character.getNumericValue(digits.charAt(i))));
+        }
+
+        dfs(input, 0, comb, result);
         return result;
     }
 
-    private void dfs(char[] digits, int indexOfDigit, char[] currentList,
-                     List<String> result, Map<Character, String> lookup) {
+    private void dfs(List<String> input, int index, char[] comb, List<String> result) {
 
-        if (indexOfDigit >= digits.length) {
+        if (index > comb.length) {
+            return;
+        }
+        if (index == comb.length) {
+            result.add(new String(comb));
             return;
         }
 
-        String mapping = lookup.get(digits[indexOfDigit]);
-
-        for (int i = 0; i < mapping.length(); i++) {
-            currentList[indexOfDigit] = mapping.charAt(i);
-
-            if (indexOfDigit == digits.length - 1) {
-                result.add(new String(currentList));
-            } else {
-                dfs(digits, indexOfDigit + 1, currentList, result, lookup);
-            }
+        for (int i = 0; i < input.get(index).length(); i++) {
+            comb[index] = input.get(index).charAt(i);
+            dfs(input, index + 1, comb, result);
         }
     }
 }

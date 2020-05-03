@@ -1,15 +1,4 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package leetcodeProblems;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LowestCommonAncestorOfBinaryTree236 {
     public static void main(String[] args) {
@@ -34,57 +23,38 @@ public class LowestCommonAncestorOfBinaryTree236 {
 
     }
 
-
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null)
+            return root;
 
-        flag = false;
-        List<TreeNode> pathOfP = new ArrayList<>();
-        pathOfNode(root, p, pathOfP, 0);
+        TreeNode[] lca = new TreeNode[1];
 
-        flag = false;
-        List<TreeNode> pathOfQ = new ArrayList<>();
-        pathOfNode(root, q, pathOfQ, 0);
-
-        int i = 0;
-        int j = 0;
-        int index = Math.min(pathOfP.size() - 1, pathOfQ.size() - 1);
-
-
-        TreeNode lastEqual = null;
-        while (i <= index && j <= index) {
-
-            if (pathOfP.get(i).val == pathOfQ.get(j).val) {
-                lastEqual = pathOfP.get(i);
-            }
-            i++;
-            j++;
-        }
-
-        return lastEqual;
+        dfs(root, p, q, lca);
+        return lca[0];
     }
 
-    private boolean flag = false;
+    // Time - O(N) where N is number of nodes in tree
+    // Space - O(N) stack frames due to recursion
+    private boolean dfs(TreeNode root, TreeNode p, TreeNode q, TreeNode[] lca) {
 
-    public boolean pathOfNode(TreeNode root, TreeNode p, List<TreeNode> path, int index) {
-
-        if (root == null || flag)
+        if (root == null || lca[0] != null)
             return false;
 
+        // left subtree
+        int left = dfs(root.left, p, q, lca) ? 1 : 0;
 
-        path.add(index, root);
+        // right subtree
+        int right = dfs(root.right, p, q, lca) ? 1 : 0;
 
-        if (root.val == p.val) {
-            flag = true;
+        // if root equals P or Q
+        int equals = (root == p || root == q) ? 1 : 0;
+
+        if (left + right + equals >= 2) {
+            lca[0] = root;
             return true;
         }
 
-        boolean left = pathOfNode(root.left, p, path, index + 1);
-        boolean right = pathOfNode(root.right, p, path, index + 1);
-        boolean result = left || right;
-        if (!result) {
-            path.remove(index);
-        }
-        return result;
+        return left + right + equals > 0;
     }
 
     public static class TreeNode {

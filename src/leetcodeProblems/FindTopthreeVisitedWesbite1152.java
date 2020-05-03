@@ -1,5 +1,7 @@
 package leetcodeProblems;
 
+import javafx.util.Pair;
+
 import java.util.*;
 
 public class FindTopthreeVisitedWesbite1152 {
@@ -29,79 +31,64 @@ public class FindTopthreeVisitedWesbite1152 {
 
     }
 
-    // Time Complexity - O(N^3)
     public List<String> mostVisitedPattern(String[] username, int[] timestamp, String[] website) {
 
-        int n = username.length;
-        List<Session> sessions = new ArrayList<>(n);
+        Map<String, Queue<Pair<Integer, String>>> userToActivity = new HashMap<>();
+        Map<String, Integer> sequenceToUserCount = new HashMap<>();
+        int maxUserCount = Integer.MIN_VALUE;
+        String mostVisitedSequence = null;
 
-        for (int i = 0; i < n; i++) {
-            sessions.add(new Session(username[i], timestamp[i], website[i]));
-        }
 
-        Collections.sort(sessions, Comparator.comparingInt(o -> o.timeStamp));
+        for (int i = 0; i < username.length; i++) {
 
-        Map<String, List<String>> userToSession = getUserToWebsiteMapping(sessions);
-
-        Map<String, Set<String>> sequenceToUsers = new HashMap<>();
-
-        int maxFreq = Integer.MIN_VALUE;
-        String maxFreqSeq = "";
-        for (Map.Entry<String, List<String>> e : userToSession.entrySet()) {
-            String user = e.getKey();
-            List<String> websites = e.getValue();
-            Set<String> seqS = generate3Sequence(new ArrayList<>(websites));
-
-            for (String seq : seqS) {
-                if (sequenceToUsers.containsKey(seq)) {
-                    Set<String> strings = sequenceToUsers.get(seq);
-                    strings.add(user);
-                    sequenceToUsers.put(seq, strings);
-                } else {
-                    Set<String> value = new HashSet<>();
-                    value.add(user);
-                    sequenceToUsers.put(seq, value);
-                }
-
-                if (sequenceToUsers.get(seq).size() > maxFreq) {
-                    maxFreqSeq = seq;
-                    maxFreq = sequenceToUsers.get(seq).size();
-                } else if (sequenceToUsers.get(seq).size() == maxFreq && seq.compareTo(maxFreqSeq) < 0) {
-                    maxFreqSeq = seq;
-                    maxFreq = sequenceToUsers.get(seq).size();
-                }
-            }
-        }
-        return Arrays.asList(maxFreqSeq.split(","));
-    }
-
-    private Map<String, List<String>> getUserToWebsiteMapping(List<Session> sessions) {
-
-        Map<String, List<String>> userToWebsites = new HashMap<>();
-
-        for (Session session : sessions) {
-            if (userToWebsites.containsKey(session.getUser())) {
-                List<String> list = userToWebsites.get(session.getUser());
-                list.add(session.getWebsite());
-                userToWebsites.put(session.getUser(), list);
+            if (userToActivity.containsKey(username[i])) {
+                Queue<Pair<Integer, String>> pairs = userToActivity.get(username[i]);
+                pairs.add(new Pair<>(timestamp[i], website[i]));
+                userToActivity.put(username[i], pairs);
             } else {
-                List<String> list = new ArrayList<>();
-                list.add(session.getWebsite());
-                userToWebsites.put(session.getUser(), list);
+                Queue<Pair<Integer, String>> l = new PriorityQueue<>(Comparator.comparingInt(Pair::getKey));
+                l.add(new Pair<>(timestamp[i], website[i]));
+                userToActivity.put(username[i], l);
             }
         }
-        return userToWebsites;
+
+        for (Map.Entry<String, Queue<Pair<Integer, String>>> e : userToActivity.entrySet()) {
+            String userName = e.getKey();
+            Queue<Pair<Integer, String>> activities = e.getValue();
+            if (activities.size() < 3) {
+                continue;
+            }
+
+            Set<String> sequences = generate3Sequence(activities);
+
+            for (String currentSequence : sequences) {
+                sequenceToUserCount.put(currentSequence, sequenceToUserCount.getOrDefault(currentSequence, 0) + 1);
+                if (sequenceToUserCount.get(currentSequence) > maxUserCount) {
+                    mostVisitedSequence = currentSequence;
+                    maxUserCount = sequenceToUserCount.get(currentSequence);
+                } else if (sequenceToUserCount.get(currentSequence) == maxUserCount && currentSequence.compareTo(mostVisitedSequence) < 0) {
+                    mostVisitedSequence = currentSequence;
+                }
+            }
+        }
+
+        return Arrays.asList(mostVisitedSequence.split(","));
+
     }
 
-    private Set<String> generate3Sequence(List<String> sortedList) {
+    private Set<String> generate3Sequence(Queue<Pair<Integer, String>> inputQueue) {
 
         Set<String> result = new HashSet<>();
+        List<String> sortedList = new ArrayList<>();
+        while (!inputQueue.isEmpty()){
+            sortedList.add(inputQueue.poll().getValue());
+        }
 
         for (int i = 0; i <= sortedList.size() - 3; i++) {
             for (int j = i + 1; j <= sortedList.size() - 2; j++) {
                 for (int k = j + 1; k <= sortedList.size() - 1; k++) {
                     String sb = sortedList.get(i) + "," +
-                            sortedList.get(j) + "," +
+                            sortedList.get(j)+ "," +
                             sortedList.get(k);
                     result.add(sb);
                 }
@@ -110,31 +97,112 @@ public class FindTopthreeVisitedWesbite1152 {
         return result;
     }
 
-    static class Session {
-        String user;
-        int timeStamp;
-        String website;
-
-        public Session(String website) {
-            this.website = website;
-        }
-
-        public Session(String user, int timeStamp, String website) {
-            this.user = user;
-            this.timeStamp = timeStamp;
-            this.website = website;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public int getTimeStamp() {
-            return timeStamp;
-        }
-
-        public String getWebsite() {
-            return website;
-        }
-    }
+    // Time Complexity - O(N^3)
+//    public List<String> mostVisitedPattern(String[] username, int[] timestamp, String[] website) {
+//
+//        int n = username.length;
+//        List<Session> sessions = new ArrayList<>(n);
+//
+//        for (int i = 0; i < n; i++) {
+//            sessions.add(new Session(username[i], timestamp[i], website[i]));
+//        }
+//
+//        Collections.sort(sessions, Comparator.comparingInt(o -> o.timeStamp));
+//
+//        Map<String, List<String>> userToSession = getUserToWebsiteMapping(sessions);
+//
+//        Map<String, Set<String>> sequenceToUsers = new HashMap<>();
+//
+//        int maxFreq = Integer.MIN_VALUE;
+//        String maxFreqSeq = "";
+//        for (Map.Entry<String, List<String>> e : userToSession.entrySet()) {
+//            String user = e.getKey();
+//            List<String> websites = e.getValue();
+//            Set<String> seqS = generate3Sequence(new ArrayList<>(websites));
+//
+//            for (String seq : seqS) {
+//                if (sequenceToUsers.containsKey(seq)) {
+//                    Set<String> strings = sequenceToUsers.get(seq);
+//                    strings.add(user);
+//                    sequenceToUsers.put(seq, strings);
+//                } else {
+//                    Set<String> value = new HashSet<>();
+//                    value.add(user);
+//                    sequenceToUsers.put(seq, value);
+//                }
+//
+//                if (sequenceToUsers.get(seq).size() > maxFreq) {
+//                    maxFreqSeq = seq;
+//                    maxFreq = sequenceToUsers.get(seq).size();
+//                } else if (sequenceToUsers.get(seq).size() == maxFreq && seq.compareTo(maxFreqSeq) < 0) {
+//                    maxFreqSeq = seq;
+//                    maxFreq = sequenceToUsers.get(seq).size();
+//                }
+//            }
+//        }
+//        return Arrays.asList(maxFreqSeq.split(","));
+//    }
+//
+//    private Map<String, List<String>> getUserToWebsiteMapping(List<Session> sessions) {
+//
+//        Map<String, List<String>> userToWebsites = new HashMap<>();
+//
+//        for (Session session : sessions) {
+//            if (userToWebsites.containsKey(session.getUser())) {
+//                List<String> list = userToWebsites.get(session.getUser());
+//                list.add(session.getWebsite());
+//                userToWebsites.put(session.getUser(), list);
+//            } else {
+//                List<String> list = new ArrayList<>();
+//                list.add(session.getWebsite());
+//                userToWebsites.put(session.getUser(), list);
+//            }
+//        }
+//        return userToWebsites;
+//    }
+//
+//    private Set<String> generate3Sequence(List<String> sortedList) {
+//
+//        Set<String> result = new HashSet<>();
+//
+//        for (int i = 0; i <= sortedList.size() - 3; i++) {
+//            for (int j = i + 1; j <= sortedList.size() - 2; j++) {
+//                for (int k = j + 1; k <= sortedList.size() - 1; k++) {
+//                    String sb = sortedList.get(i) + "," +
+//                            sortedList.get(j) + "," +
+//                            sortedList.get(k);
+//                    result.add(sb);
+//                }
+//            }
+//        }
+//        return result;
+//    }
+//
+//    static class Session {
+//        String user;
+//        int timeStamp;
+//        String website;
+//
+//        public Session(String website) {
+//            this.website = website;
+//        }
+//
+//        public Session(String user, int timeStamp, String website) {
+//            this.user = user;
+//            this.timeStamp = timeStamp;
+//            this.website = website;
+//        }
+//
+//        public String getUser() {
+//            return user;
+//        }
+//
+//        public int getTimeStamp() {
+//            return timeStamp;
+//        }
+//
+//        public String getWebsite() {
+//            return website;
+//        }
+//    }
 }

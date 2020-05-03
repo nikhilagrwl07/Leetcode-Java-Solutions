@@ -3,7 +3,7 @@ package practice;
 public class FindWordInDictionaryUsingTrie {
     public static void main(String[] args) {
         String dictionary[] = {"find", "a", "geeks", "all", "for", "on", "geeks", "answers", "inter"};
-        String sentence[] = {"find", "all", "answers", "on", "geeks", "for", "geeks", "geek"};
+        String sentence[] = {"find", "all", "answers", "on", "geeks", "for", "geeks"};
 
         FindWordInDictionaryUsingTrie ob = new FindWordInDictionaryUsingTrie();
         boolean result = ob.searchGivenWordInDictionary(dictionary, sentence);
@@ -65,7 +65,6 @@ class Trie {
             }
             tmpRoot = tmpRoot.getChildren()[input[i] - 'a'];
             if (tmpRoot.isCompleteWord() && i == input.length - 1) {
-                tmpRoot.subtractCompleteWordFreq();
                 return true;
             }
         }
@@ -117,10 +116,6 @@ class TrieNode {
 
     public void addCompleteWordFreq(){
         countOfCompleteWord++;
-    }
-
-    public void subtractCompleteWordFreq(){
-        countOfCompleteWord--;
     }
 
     public boolean isCompleteWord() {

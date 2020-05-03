@@ -1,11 +1,3 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package leetcodeProblems;
 
 import java.util.Arrays;

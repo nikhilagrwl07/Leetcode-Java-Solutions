@@ -1,36 +1,24 @@
-package mock.microsoft.set5;
+package leetcodeProblems.medium;
 
-public class AddTwoNumbersLinkedListInReverseOrder445 {
-
+public class SumTwoNumberLinkedList2 {
     public static void main(String[] args) {
+        SumTwoNumberLinkedList2 ob = new SumTwoNumberLinkedList2();
+//        Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+//        Output: 7 -> 0 -> 8
 
-        ListNode t1 = new ListNode(7);
-        ListNode t2 = new ListNode(2);
-        ListNode t3 = new ListNode(4);
-        ListNode t4 = new ListNode(3);
-//        ListNode tExtra = new ListNode(1);
-        t1.next = t2;
-        t2.next = t3;
-        t3.next = t4;
-//        t3.next = tExtra;
+        ListNode three = new ListNode(3, null);
+        ListNode fourFirst = new ListNode(4, three);
+        ListNode two = new ListNode(2, fourFirst);
 
 
-        ListNode t10 = new ListNode(5);
-        ListNode t11 = new ListNode(6);
-        ListNode t12 = new ListNode(4);
+        ListNode fourSecond = new ListNode(4, null);
+        ListNode six = new ListNode(6, fourSecond);
+        ListNode five = new ListNode(5, six);
 
-        t10.next = t11;
-        t11.next = t12;
+        ListNode result = ob.addTwoNumbers(two, five);
 
-        AddTwoNumbersLinkedListInReverseOrder445 ob = new AddTwoNumbersLinkedListInReverseOrder445();
-        System.out.println(t1.toString());
-        System.out.println(t10.toString());
-//        ListNode reverseLinkedList = ob.reverseLinkedList(t1);
-//        ob.print(reverseLinkedList);
+        System.out.println(result.toString());
 
-
-        ListNode summedHead = ob.addTwoNumbers(t1, t10);
-        System.out.println(summedHead.toString());
     }
 
     public ListNode addTwoNumbers(ListNode h1, ListNode h2)  {
@@ -99,12 +87,8 @@ public class AddTwoNumbersLinkedListInReverseOrder445 {
         int val;
         ListNode next;
 
-        ListNode(int x) {
-            val = x;
-        }
-
-        public ListNode(int val, ListNode next) {
-            this.val = val;
+        public ListNode(int value, ListNode next) {
+            this.val = value;
             this.next = next;
         }
 

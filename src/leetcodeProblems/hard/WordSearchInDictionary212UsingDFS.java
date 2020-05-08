@@ -1,17 +1,9 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
-package mock.microsoft.set3;
+package leetcodeProblems.hard;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WordSearchInDictionary212 {
+public class WordSearchInDictionary212UsingDFS {
     public static void main(String[] args) {
 //        char[][] board = {
 //                {'o','a','a','n'},
@@ -26,12 +18,23 @@ public class WordSearchInDictionary212 {
 //        words[2]="eat";
 //        words[3]="rain";
 
-        char[][] board = {{'a','b'},{'c','d'}};
+//        char[][] board = {{'a','b'},{'c','d'}};
+//        String[] words = {"ab","cb","ad","bd","ac","ca","da","bc","db","adcb","dabc","abb","acb"};
+        char[][] board = {
+                {'b', 'a', 'a', 'b', 'a', 'b'},
+                {'a', 'b', 'a', 'a', 'a', 'a'},
+                {'a', 'b', 'a', 'a', 'a', 'b'},
+                {'a', 'b', 'a', 'b', 'b', 'a'},
+                {'a', 'a', 'b', 'b', 'a', 'b'},
+                {'a', 'a', 'b', 'b', 'b', 'a'},
+                {'a', 'a', 'b', 'a', 'a', 'b'}
+        };
 
-        String[] words = {"ab","cb","ad","bd","ac","ca","da","bc","db","adcb","dabc","abb","acb"};
+
+        String[] words = {"bbaabaabaaaaabaababaaaaababb", "aabbaaabaaabaabaaaaaabbaaaba", "babaababbbbbbbaabaababaabaaa", "bbbaaabaabbaaababababbbbbaaa", "babbabbbbaabbabaaaaaabbbaaab", "bbbababbbbbbbababbabbbbbabaa", "babababbababaabbbbabbbbabbba", "abbbbbbaabaaabaaababaabbabba", "aabaabababbbbbbababbbababbaa", "aabbbbabbaababaaaabababbaaba", "ababaababaaabbabbaabbaabbaba", "abaabbbaaaaababbbaaaaabbbaab", "aabbabaabaabbabababaaabbbaab", "baaabaaaabbabaaabaabababaaaa", "aaabbabaaaababbabbaabbaabbaa", "aaabaaaaabaabbabaabbbbaabaaa", "abbaabbaaaabbaababababbaabbb", "baabaababbbbaaaabaaabbababbb", "aabaababbaababbaaabaabababab", "abbaaabbaabaabaabbbbaabbbbbb", "aaababaabbaaabbbaaabbabbabab", "bbababbbabbbbabbbbabbbbbabaa", "abbbaabbbaaababbbababbababba", "bbbbbbbabbbababbabaabababaab", "aaaababaabbbbabaaaaabaaaaabb", "bbaaabbbbabbaaabbaabbabbaaba", "aabaabbbbaabaabbabaabababaaa", "abbababbbaababaabbababababbb", "aabbbabbaaaababbbbabbababbbb", "babbbaabababbbbbbbbbaabbabaa"};
 
 
-        WordSearchInDictionary212 ob = new WordSearchInDictionary212();
+        WordSearchInDictionary212UsingDFS ob = new WordSearchInDictionary212UsingDFS();
         List<String> selectedWord = ob.findWords(board, words);
         System.out.println(selectedWord);
 

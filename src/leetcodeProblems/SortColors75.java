@@ -14,7 +14,9 @@ public class SortColors75 {
     public static void main(String[] args) {
 
         SortColors75 ob = new SortColors75();
-        int[] a = {2, 1, 2, 1, 0, 0};
+//        int[] a = {2, 1, 2, 1, 0, 0};
+        int[] a = {1, 0, 2, 1, 1, 0};
+//        int[] a = {};
         System.out.println(Arrays.toString(a));
         ob.sortColors(a);
         System.out.println(Arrays.toString(a));
@@ -22,33 +24,24 @@ public class SortColors75 {
     }
 
     public void sortColors(int[] nums) {
+        int low = 0, current = 0, high = nums.length - 1;
 
-        if (nums == null || nums.length == 0) {
-            return;
-        }
+        // (0,low-1) -->  0
+        // (low,high) -->  1
+        // (high+1 , nums.length-1) -->  2
+        while (current <= high) {
 
-        int low = 0, index = 0, high = nums.length - 1;
-
-        // see below code as low and high are inclusive boundaries of number 1
-        // and (0,low-1) is contained with 0
-        // and (high+1,nums.length-1) is contained with 2
-        // and (low,high) is contained with 1
-
-        while (index <= high) {
-
-            if (nums[index] == 0) {
-                swap(nums, low, index);
-
+            if (nums[current] == 0) {
+                swap(nums, low, current);
                 low++;
-                index++;
-            } else if (nums[index] == 2) {
-                swap(nums, index, high);
+                current++;
+            } else if (nums[current] == 2) {
+                swap(nums, current, high);
                 high--;
             } else {
-                index++;
+                current++;
             }
         }
-        System.out.println("low = " + low + " High = " + high);
     }
 
     private void swap(int[] nums, int i, int i1) {
@@ -56,6 +49,4 @@ public class SortColors75 {
         nums[i] = nums[i1];
         nums[i1] = t;
     }
-
-
 }

@@ -1,11 +1,3 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package leetcodeProblems;
 
 import java.util.HashMap;
@@ -24,31 +16,31 @@ public class LongestSubstringWithoutRepeatingCharacters3 {
     }
 
     // Time Complexity - O(N) where N is length of input string s
+    // Space Complexity - O(M) where M is length of longest substring without repeating chars
     public int lengthOfLongestSubstring(String s) {
         if (s == null || s.isEmpty())
             return 0;
 
-        if (s.length() == 1)
-            return 1;
-
-
+        int longestSubString = 0;
+        int start = 0, end;
         Map<Character, Integer> map = new HashMap<>();
-        int start = 0;
-        int end = 0;
-        int maxLength = Integer.MIN_VALUE;
 
-        while (end <= s.length() - 1) {
-
-            if (map.containsKey(s.charAt(end)) && map.get(s.charAt(end)) >= start) {
-                //update start and end
-                int lastIndex = map.get(s.charAt(end));
-                start = lastIndex + 1;
+        for (int i = 0; i < s.length(); i++) {
+            char currentChar = s.charAt(i);
+            if (map.get(currentChar) == null) {
+                end = i;
+            } else {
+                int index = map.get(currentChar);
+                if (index < start) {
+                    end = i;
+                } else {
+                    end = i;
+                    start = index + 1;
+                }
             }
-
-            map.put(s.charAt(end), end);
-            maxLength = Math.max(maxLength, end - start + 1);
-            end++;
+            map.put(currentChar, i);
+            longestSubString = Math.max(longestSubString, end - start + 1);
         }
-        return maxLength;
+        return longestSubString;
     }
 }

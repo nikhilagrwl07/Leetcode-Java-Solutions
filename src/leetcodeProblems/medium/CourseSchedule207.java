@@ -92,56 +92,49 @@ public class CourseSchedule207 {
     // Time Complexity - O(E+V)
     // Space Complexity - O(E+V)
     public boolean canFinishDFS(int numCourses, int[][] prerequisites) {
-        Map<Integer, Status> courseStatus = new HashMap<>(numCourses);
 
-        Map<Integer, List<Integer>> courseToPrerequistic = new HashMap<>();
-        for (int[] course : prerequisites) {
-            if (course[1] == course[0])
-                return false;
+        if (prerequisites == null || prerequisites.length == 0 || prerequisites[0].length == 0)
+            return true;
 
-            List<Integer> prerequistic = courseToPrerequistic.getOrDefault(course[0], new ArrayList<>());
-            prerequistic.add(course[1]);
-            courseToPrerequistic.put(course[0], prerequistic);
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+
+        for (int[] pre : prerequisites) {
+            List<Integer> nei = graph.get(pre[1]);
+            if (nei == null) {
+                nei = new ArrayList<>();
+            }
+            nei.add(pre[0]);
+            graph.put(pre[1], nei);
         }
 
-        for (Map.Entry<Integer, List<Integer>> e : courseToPrerequistic.entrySet()) {
-            int course = e.getKey();
+        char[] status = new char[numCourses];
 
-            if (courseStatus.get(course) == Status.PROCESSING)
-                return false;
-
-            if (courseStatus.get(course) == Status.COMPLETED)
-                continue;
-
-            if (!dfs(course, courseToPrerequistic, courseStatus))
+        for (Map.Entry<Integer, List<Integer>> e : graph.entrySet()) {
+            int node = e.getKey();
+            if (!dfs(node, graph, status))
                 return false;
         }
-
         return true;
     }
 
-    private boolean dfs(int course, Map<Integer, List<Integer>> courseToPrerequistic,
-                        Map<Integer, Status> courseStatusMap) {
+    private boolean dfs(int node, Map<Integer, List<Integer>> graph, char[] status) {
+        if (status[node] == 'P')
+            return false;
 
-        courseStatusMap.put(course, Status.PROCESSING);
-        for (Integer preRequsite : courseToPrerequistic.getOrDefault(course, new ArrayList<>())) {
-            if (courseStatusMap.get(preRequsite) == Status.PROCESSING) {
-                courseStatusMap.put(course, Status.COMPLETED);
-                return false;
-            }
+        if (status[node] == 'C')
+            return true;
 
-            if (!dfs(preRequsite, courseToPrerequistic, courseStatusMap)) {
-                courseStatusMap.put(course, Status.COMPLETED);
+        status[node] = 'P';
+
+        List<Integer> neighbours = graph.getOrDefault(node, new ArrayList<>());
+        for (Integer nei : neighbours) {
+            boolean dfs = dfs(nei, graph, status);
+            if (!dfs)
                 return false;
-            }
         }
-        courseStatusMap.put(course, Status.COMPLETED);
-        return true;
-    }
 
-    enum Status {
-        PROCESSING,
-        COMPLETED;
+        status[node] = 'C';
+        return true;
     }
 }
 

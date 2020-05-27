@@ -1,21 +1,12 @@
-package leetcodeProblems;/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+package leetcodeProblems;
+import java.util.*;
 
 public class ReorderLogFiles937 {
     public static void main(String[] args) {
+        ReorderLogFiles937 ob = new ReorderLogFiles937();
 //        String[] inputLogs = {"a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo"};
-        String[] inputLogs =
-                {"l evmbcyaqe zx", "pk amxcdvhuhavi", "cx 965 84 9 20", "b 401957007189", "ez xodjwnc awg", "96t oxgsdkuj j", "af 611441988 6", "l9d 21 6 77 795", "l khuxbzszqarfz", "4zj 6115548620", "l6 fzqtxlo qi j", "anr 76976970 17", "of vtqfbyxaxtce", "j 544232 60 554", "108 u amvyjml s"};
+//        String[] inputLogs =
+//                {"l evmbcyaqe zx", "pk amxcdvhuhavi", "cx 965 84 9 20", "b 401957007189", "ez xodjwnc awg", "96t oxgsdkuj j", "af 611441988 6", "l9d 21 6 77 795", "l khuxbzszqarfz", "4zj 6115548620", "l6 fzqtxlo qi j", "anr 76976970 17", "of vtqfbyxaxtce", "j 544232 60 554", "108 u amvyjml s"};
 
 //        String[] inputLogs = {"1 n u",
 //                "r 527",
@@ -24,62 +15,61 @@ public class ReorderLogFiles937 {
 //                "6 82"
 //        };
 
-//        String[] inputLogs = {
-//                "a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo", "a2 act car"
-//        };
-        String[] orderedLogs = reorderLogFiles(inputLogs);
-
+        String[] inputLogs = {
+                "a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo", "a2 act car"
+        };
+        String[] orderedLogs = ob.reorderLogFiles(inputLogs);
         System.out.println(Arrays.toString(orderedLogs));
 
 
     }
 
-    private static String[] reorderLogFiles(String[] logs) {
-
-        List<String> letterLogs = new LinkedList<>();
-        List<String> digitLogs = new LinkedList<>();
-        for (String input : logs) {
-            String[] splittedString = input.split(" ");
-
-            char c = splittedString[1].toCharArray()[0];
-
-            //letter logs
-            if (c >= 'a' && c <= 'z') {
-                letterLogs.add(input);
-            } else {
-                digitLogs.add(input);
-            }
+    public String[] reorderLogFiles(String[] logs) {
+        if (logs == null || logs.length <= 1) {
+            return logs;
         }
 
-        // Sort the letter logs
-        Comparator<String> letterLogsComparator = new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                String[] splitteds1 = o1.split(" ");
-                String[] splitteds2 = o2.split(" ");
+        List<String> digitsLogs = new LinkedList<>();
+        List<String> letterLogs = new ArrayList<>();
 
-                int compare = splitteds1[1].compareTo(splitteds2[1]);
+        Comparator<String> letterComparator = (o1, o2) -> {
+            int e1 = o1.indexOf(' ');
+            int e2 = o2.indexOf(' ');
 
-                if (compare != 0) {
-                    return compare;
-                } else {
-                    return splitteds1[0].compareTo(splitteds2[0]);
-                }
-            }
+            String s1p1 = o1.substring(0, e1);
+            String s1p2 = o1.substring(e1 + 1);
+
+            String s2p1 = o2.substring(0, e2);
+            String s2p2 = o2.substring(e2 + 1);
+
+            int result = s1p2.compareTo(s2p2);
+            if (result != 0)
+                return result;
+
+            return s1p1.compareTo(s2p1);
         };
 
-        letterLogs.sort(letterLogsComparator);
+        for (String s : logs) {
+            if (Character.isDigit(s.charAt(s.indexOf(' ') + 1))) {
+                digitsLogs.add(s);
+            } else {
+                letterLogs.add(s);
+            }
+        }
 
+        Collections.sort(letterLogs, letterComparator);
+
+        String[] finalResult = new String[logs.length];
         int index = 0;
-        String[] result = new String[logs.length];
-
-        for (String letter : letterLogs) {
-            result[index++] = letter;
+        while (index < letterLogs.size()) {
+            finalResult[index] = letterLogs.get(index);
+            index++;
+        }
+        int i = 0;
+        while (i < digitsLogs.size()) {
+            finalResult[index++] = digitsLogs.get(i++);
         }
 
-        for (String digitLog : digitLogs) {
-            result[index++] = digitLog;
-        }
-        return result;
+        return finalResult;
     }
 }

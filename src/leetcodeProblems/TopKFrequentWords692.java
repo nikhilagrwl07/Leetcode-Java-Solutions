@@ -1,11 +1,3 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package leetcodeProblems;
 
 import java.util.*;
@@ -14,13 +6,13 @@ public class TopKFrequentWords692 {
     public static void main(String[] args) {
         TopKFrequentWords692 ob = new TopKFrequentWords692();
 
-//        String[] s = {"i", "love", "leetcode", "i", "love", "coding"};
-//        int k = 2;
+        String[] s1 = {"i", "love", "leetcode", "i", "love", "coding"};
+        int k1 = 2;
 
-        String[] s = {"the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"};
-        int k =4;
-        List<String> topKFrequent = ob.topKFrequent(s, k);
-        System.out.println(topKFrequent);
+        String[] s2 = {"the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"};
+        int k2 = 4;
+        System.out.println(ob.topKFrequent(s1, k1));
+        System.out.println(ob.topKFrequent(s2, k2));
     }
 
 
@@ -43,13 +35,12 @@ public class TopKFrequentWords692 {
             }
         });
 
-        for (String w : words) {
-            freq.put(w, freq.getOrDefault(w, 0) + 1);
-        }
+        for (String word : words) {
+            freq.put(word, freq.getOrDefault(word, 0) + 1);
 
-        for (Map.Entry<String, Integer> e : freq.entrySet()) {
-            pq.offer(e.getKey());
+            if (freq.get(word) > 1) pq.remove(word);
 
+            pq.offer(word);
             if (pq.size() > k) {
                 pq.poll();
             }

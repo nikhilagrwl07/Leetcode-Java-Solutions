@@ -6,57 +6,58 @@ public class BestTimeToSellAndBuyStockWithCooldown309 {
         int[] prices = {1, 2, 3, 0, 2};
         int[] prices2 = {7, 1, 5, 3, 6, 4};
 
-        System.out.println(ob.maxProfitWithHistoryOfAction(prices));
-        System.out.println(ob.maxProfitWithHistoryOfAction(prices2));
+        System.out.println(ob.maxProfit(prices));
+        System.out.println(ob.maxProfit(prices2));
     }
 
     public int maxProfit(int[] prices) {
         if (prices == null || prices.length == 0)
             return 0;
 
-        int[] sell = new int[prices.length];
-        int[] buy = new int[prices.length];
-        int[] cooldown = new int[prices.length];
+        Integer buy = -prices[0];
+        Integer sell = null;
+        Integer noAction = 0;
+        Integer hold = null;
 
-        int index = 0;
+        Integer tmpbuy;
+        Integer tmpsell;
+        Integer tmpnoAction;
+        Integer tmphold;
+        for (int i = 1; i < prices.length; i++) {
+            tmpbuy = Math.max(noAction + -prices[i], -prices[i]);
 
-        sell[index] = 0;
-        cooldown[index] = 0;
-        buy[index] = -prices[index];
+            if(hold!=null)
+                tmpsell = Math.max(prices[i] + buy, prices[i] + hold);
+            else
+                tmpsell = prices[i] + buy;
 
-        index++;
+            if (sell != null)
+                tmpnoAction = Math.max(noAction, sell);
+            else
+                tmpnoAction = noAction;
 
-        while (index < prices.length) {
-            sell[index] = buy[index - 1] + prices[index];
-            buy[index] = Math.max(buy[index - 1], cooldown[index - 1] - prices[index]);
-            cooldown[index] = Math.max(cooldown[index - 1], sell[index - 1]);
-            index++;
+
+            if (hold != null)
+                tmphold = Math.max(hold, buy);
+            else
+                tmphold = buy;
+
+            buy = tmpbuy;
+            sell = tmpsell;
+            noAction = tmpnoAction;
+            hold = tmphold;
+
         }
 
-        return Math.max(sell[prices.length - 1], cooldown[prices.length - 1]);
-    }
-
-    public int maxProfitWithHistoryOfAction(int[] prices) {
-        if (prices == null || prices.length == 0)
-            return 0;
-
-        int index = 0;
-
-        int sell = 0;
-        int cooldown = 0;
-        int buy = -prices[index];
-        int coolDownTmp;
-
-        index++;
-
-        while (index < prices.length) {
-            coolDownTmp = Math.max(cooldown, sell);
-            sell = buy + prices[index];
-            buy = Math.max(buy, cooldown - prices[index]);
-            cooldown = coolDownTmp;
-            index++;
+        int result = noAction;
+        if (sell != null) {
+            result = Math.max(result, sell);
+        }
+        if (hold != null) {
+            result = Math.max(result, hold);
         }
 
-        return Math.max(sell, cooldown);
+        return result;
+
     }
 }

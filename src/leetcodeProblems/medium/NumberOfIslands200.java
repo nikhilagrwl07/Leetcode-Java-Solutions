@@ -1,10 +1,4 @@
-package leetcodeProblems.medium;/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
+package leetcodeProblems.medium;
 
 import java.util.LinkedList;
 import java.util.Queue;

@@ -3,52 +3,50 @@ package leetcodeProblems.hard;
 public class EditDistance72 {
     public static void main(String[] args) {
         EditDistance72 ob = new EditDistance72();
-//        String word1 = "horse", word2 = "ros";
-//        String word1 = "intention", word2 = "execution";
-//        String word1 = "abs", word2 = "";
-        String word1 = "pneumonoultramicroscopicsilicovolcanoconiosis",
-                word2 = "ultramicroscopically";
-
-        int minDistance = ob.minDistance(word1, word2);
-        System.out.println(minDistance);
+        String word1 = "horse", word2 = "ros";
+        String word3 = "intention", word4 = "execution";
+        String word5 = "abs", word6 = "";
+        String word7 = "pneumonoultramicroscopicsilicovolcanoconiosis", word8 = "ultramicroscopically";
+        String word9 = "a", word10 = "ab";
+        System.out.println(ob.minDistance(word1, word2));
+        System.out.println(ob.minDistance(word3, word4));
+        System.out.println(ob.minDistance(word5, word6));
+        System.out.println(ob.minDistance(word7, word8));
+        System.out.println(ob.minDistance(word9, word10));
     }
 
+    // Time - O(N * M)
+    // Space - O(N * M)
     public int minDistance(String word1, String word2) {
+        int l1 = (word1 == null || word1.length() == 0) ? 0 : word1.length();
+        int l2 = (word2 == null || word2.length() == 0) ? 0 : word2.length();
 
-        if (word1 == null || word1.isEmpty()) {
-            return word2.length();
+        if (l1 * l2 == 0)
+            return l1 + l2;
+
+        int[][] t = new int[l1 + 1][l2 + 1];
+        char w1;
+        char w2;
+
+        for (int i = 0; i <= l1; i++) {
+            t[i][0] = i;
+        }
+        for (int j = 0; j <= l2; j++) {
+            t[0][j] = j;
         }
 
-        if (word2 == null || word2.isEmpty()) {
-            return word1.length();
-        }
+        for (int i = 1; i <= l1; i++) {
+            w1 = word1.charAt(i - 1);
+            for (int j = 1; j <= l2; j++) {
+                w2 = word2.charAt(j - 1);
 
-        int[][] d = new int[word1.length() + 1][word2.length() + 1];
-
-        if (word1.charAt(0) != word2.charAt(0))
-            d[0][0] = 0;
-
-        // filling first row
-        for (int c = 0; c < word2.length(); c++) {
-            d[0][c + 1] = d[0][c - 1 + 1] + 1;
-        }
-
-        // filling first column
-        for (int r = 0; r < word1.length(); r++) {
-            d[r + 1][0] = d[r - 1 + 1][0] + 1;
-        }
-
-
-        for (int r = 1; r < word1.length(); r++) {
-            for (int c = 1; c < word2.length(); c++) {
-                if (word1.charAt(r) == word2.charAt(c)) {
-                    d[r + 1][c + 1] = d[r - 1 + 1][c - 1 + 1];
+                if (w1 == w2) {
+                    t[i][j] = t[i - 1][j - 1];
                 } else {
-                    d[r + 1][c + 1] = Math.min(d[r - 1 + 1][c - 1 + 1],
-                            Math.min(d[r + 1][c - 1 + 1], d[r - 1 + 1][c + 1])) + 1;
+                    t[i][j] = Math.min(t[i - 1][j - 1], Math.min(t[i - 1][j], t[i][j - 1])) + 1;
                 }
             }
         }
-        return d[d.length - 1][d[0].length - 1];
+        return t[l1][l2];
     }
 }

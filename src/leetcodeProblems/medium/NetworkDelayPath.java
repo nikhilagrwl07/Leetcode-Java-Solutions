@@ -2,9 +2,9 @@ package leetcodeProblems.medium;
 
 import java.util.*;
 
-public class NetworkDelayTime743 {
+public class NetworkDelayPath {
     public static void main(String[] args) {
-        NetworkDelayTime743 ob = new NetworkDelayTime743();
+        NetworkDelayPath ob = new NetworkDelayPath();
         int[][] times = {{2, 1, 1}, {2, 3, 1}, {3, 4, 1}};
         int N = 4, K = 2;
 
@@ -30,18 +30,18 @@ public class NetworkDelayTime743 {
         int N8 = 5, K8 = 4;
 
         System.out.println(ob.networkDelayTime(times, N, K));
-        System.out.println(ob.networkDelayTime(times2, N2, K2));
-        System.out.println(ob.networkDelayTime(times3, N3, K3));
-        System.out.println(ob.networkDelayTime(times4, N4, K4));
-        System.out.println(ob.networkDelayTime(times5, N5, K5));
-        System.out.println(ob.networkDelayTime(times6, N6, K6));
-        System.out.println(ob.networkDelayTime(times7, N7, K7));
-        System.out.println(ob.networkDelayTime(times8, N8, K8));
+//        System.out.println(ob.networkDelayTime(times2, N2, K2));
+//        System.out.println(ob.networkDelayTime(times3, N3, K3));
+//        System.out.println(ob.networkDelayTime(times4, N4, K4));
+//        System.out.println(ob.networkDelayTime(times5, N5, K5));
+//        System.out.println(ob.networkDelayTime(times6, N6, K6));
+//        System.out.println(ob.networkDelayTime(times7, N7, K7));
+//        System.out.println(ob.networkDelayTime(times8, N8, K8));
     }
 
     // Time - O(N * N) in worst case if each vertex are connected to all remaining vertices
     // Space - O(N)
-    public int networkDelayTime(int[][] times, int N, int K) {
+    public List<Integer> networkDelayTime(int[][] times, int N, int K) {
         Map<Integer, List<int[]>> graph = new HashMap<>();
 
         for (int i = 0; i < times.length; i++) {
@@ -60,9 +60,13 @@ public class NetworkDelayTime743 {
 
         Map<Integer, Integer> vertexToDistance = new HashMap<>();
 
+        List<Integer> shortestPath = new ArrayList<>();
+
         while (!pq.isEmpty()) {
 
             currentNode = pq.poll(); // shortest distance
+
+            shortestPath.add(currentNode[0]);
 
             if(vertexToDistance.containsKey(currentNode[0]))
                 continue;
@@ -81,15 +85,6 @@ public class NetworkDelayTime743 {
             }
         }
 
-        if (vertexToDistance.size() != N) {
-            return -1;
-        }
-
-        int globalMax = -1;
-
-        for (int c : vertexToDistance.values()) {
-            globalMax = Math.max(globalMax, c);
-        }
-        return globalMax;
+        return shortestPath;
     }
 }

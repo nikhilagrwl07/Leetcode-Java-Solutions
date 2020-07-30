@@ -1,15 +1,8 @@
-package leetcodeProblems;/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
+package leetcodeProblems.easy;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RomanToNumerical {
+public class RomanToNumerical13 {
     public static void main(String[] args) {
 //        String input = "III";
 //        String input = "IV";

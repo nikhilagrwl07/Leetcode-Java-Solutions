@@ -1,80 +1,100 @@
 package leetcodeProblems.medium;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class ReorganizeString767 {
     public static void main(String[] args) {
 
         ReorganizeString767 ob = new ReorganizeString767();
-//        String input = "caaab"; // 5/2 = 2 -->
-        String input = "aaab"; // 6/2 = 3 -->
+        String input1 = "caaab"; // 5/2 = 2 -->
+        String input2 = "aaab"; // 6/2 = 3 -->
 
-        String reorganizedString = ob.reorganizeString(input);
-        System.out.println(reorganizedString);
+        System.out.println(ob.reorganizeString(input1));
+        System.out.println(ob.reorganizeString(input2));
     }
 
     // Time complexity - O(Count of distinct character in input string S * length of input string S)
-    public String reorganizeString(String S) {
-        StringBuilder result = new StringBuilder(S.length());
-        int coolingperiod = 1;
+    public String reorganizeString(String s) {
 
-        Map<Character, Integer> charToFreq = new HashMap<>(26);
+        if (s == null || s.isEmpty())
+            return "";
+
+        Map<Character, Integer> freq = new HashMap<>();
+        Queue<Character> maxHeap = new PriorityQueue<>((c1, c2) -> {
+            return freq.get(c2) - freq.get(c1);
+        });
+        for (int i = 0; i < s.length(); i++) {
+
+            if (freq.get(s.charAt(i)) != null) {
+                maxHeap.remove(s.charAt(i));
+            }
+
+            freq.put(s.charAt(i), freq.getOrDefault(s.charAt(i), 0) + 1);
 
 
-        // calculating char to occurrence
-        for (char c : S.toCharArray()) {
-            charToFreq.put(c, charToFreq.get(c) == null ? 1 : charToFreq.get(c) + 1);
-        }
-
-        // map heap based on occurrence of char
-        Queue<Character> pq = new PriorityQueue<>(26, (o1, o2) ->
-                charToFreq.get(o2) - charToFreq.get(o1));
-
-        for (Character c : charToFreq.keySet()) {
-
-            Integer f = charToFreq.get(c);
-
-            if ((S.length() % 2 == 0 && f > S.length()/2) ||
-                    (S.length() % 2 != 0 && f > (S.length()/2)+1)) {
+            if ((s.length() % 2 == 0 && freq.get(s.charAt(i)) > s.length() / 2) ||
+                    (s.length() % 2 != 0 && freq.get(s.charAt(i)) > (s.length() / 2) + 1)) {
                 return "";
             }
-            pq.offer(c);
+
+
+            maxHeap.offer(s.charAt(i));
         }
 
-        List<Character> temp = new ArrayList<>();
-        while (!pq.isEmpty()) {
 
-            temp.clear();
-            int coolingtimer = 0;
+        int startIndex = 0;
+        char[] result = new char[s.length()];
 
-            while (coolingtimer <= coolingperiod && !pq.isEmpty()) {
+        char tmp = maxHeap.poll();
+        int ft = freq.get(tmp);
+        result[startIndex] = tmp;
 
-                if (result.length() != 0 && result.charAt(result.length() - 1) == pq.peek()) {
+        if (freq.get(tmp) > 1) {
+            freq.put(tmp, freq.get(tmp) - 1);
+            maxHeap.offer(tmp);
+        } else {
+            freq.remove(tmp);
+        }
+
+
+        while (!maxHeap.isEmpty()) {
+            char c = maxHeap.poll();
+            int f = freq.get(c);
+            if (result[startIndex] == c) {
+
+                if (!maxHeap.isEmpty()) {
+                    char second = maxHeap.poll();
+
+                    if (freq.get(second) > 1) {
+                        freq.put(second, freq.get(second) - 1);
+                        maxHeap.offer(second);
+                    } else {
+                        freq.remove(second);
+                    }
+                    startIndex++;
+                    result[startIndex] = second;
+
+                    maxHeap.offer(c);
+                } else {
                     return "";
                 }
 
-                if (charToFreq.get(pq.peek()) > 1) {
-                    Character polledChar = pq.poll();
-                    // update result
-                    result.append(polledChar);
-                    // update map of freq map
-                    charToFreq.put(polledChar, charToFreq.get(polledChar) - 1);
-                    // update temp list
-                    temp.add(polledChar);
+            } else {
+                startIndex++;
+                result[startIndex] = c;
 
+                if (f == 1) {
+                    freq.remove(c);
                 } else {
-                    Character polledChar = pq.poll();
-                    // update result
-                    result.append(polledChar);
-                    // update map of freq map
-                    charToFreq.remove(polledChar);
+                    freq.put(c, freq.get(c) - 1);
+                    maxHeap.offer(c);
                 }
-
-                coolingtimer++;
             }
-
-            pq.addAll(temp);
         }
-        return result.toString();
+
+        return new String(result);
     }
 }

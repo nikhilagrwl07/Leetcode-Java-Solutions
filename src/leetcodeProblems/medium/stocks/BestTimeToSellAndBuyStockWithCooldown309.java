@@ -4,10 +4,10 @@ public class BestTimeToSellAndBuyStockWithCooldown309 {
     public static void main(String[] args) {
         BestTimeToSellAndBuyStockWithCooldown309 ob = new BestTimeToSellAndBuyStockWithCooldown309();
         int[] prices = {1, 2, 3, 0, 2};
-        int[] prices2 = {7, 1, 5, 3, 6, 4};
+//        int[] prices2 = {7, 1, 5, 3, 6, 4};
 
         System.out.println(ob.maxProfit(prices));
-        System.out.println(ob.maxProfit(prices2));
+//        System.out.println(ob.maxProfit(prices2));
     }
 
     public int maxProfit(int[] prices) {
@@ -24,9 +24,9 @@ public class BestTimeToSellAndBuyStockWithCooldown309 {
         Integer tmpnoAction;
         Integer tmphold;
         for (int i = 1; i < prices.length; i++) {
-            tmpbuy = Math.max(noAction + -prices[i], -prices[i]);
+            tmpbuy = Math.max(noAction - prices[i], -prices[i]);
 
-            if(hold!=null)
+            if (hold != null)
                 tmpsell = Math.max(prices[i] + buy, prices[i] + hold);
             else
                 tmpsell = prices[i] + buy;

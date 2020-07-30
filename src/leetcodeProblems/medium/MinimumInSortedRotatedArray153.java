@@ -39,35 +39,30 @@ public class MinimumInSortedRotatedArray153 {
 
 
     public int findMin(int[] nums) {
-        return findMinUtil(nums, 0, nums.length - 1);
+
+        return search(nums, 0, nums.length - 1);
     }
 
-    private int findMinUtil(int[] nums, int low, int high) {
+    private int search(int[] nums, int low, int high) {
+
         if (low > high)
             return -1;
 
         if (low == high)
-            return nums[low];
+            return nums[(low + 1) % nums.length];
 
-        // one element OR unrotated
-        if (nums[low] < nums[high])
-            return nums[low];
 
         int mid = low + (high - low) / 2;
 
-        // two OR more element
-        if (nums[mid] > nums[mid + 1])
-            return nums[mid + 1];
-
-        // two OR more element
-        if (nums[mid - 1] > nums[mid])
-            return nums[mid];
-
-        if (nums[mid] > nums[high]) {
-            return findMinUtil(nums, mid + 1, high);
-        } else {
-            return findMinUtil(nums, low, mid - 1);
+        if (low < mid && nums[low] > nums[mid]) {
+            return search(nums, low, mid-1);
         }
+
+        if (mid < high && nums[mid] > nums[high]) {
+            return search(nums, mid, high-1);
+        }
+
+        return search(nums, mid+1, high);
     }
 
     public int findMinIterative(int[] nums) {

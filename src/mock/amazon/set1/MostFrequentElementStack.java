@@ -54,20 +54,17 @@ class FreqStack {
 
     public FreqStack() {
         m = new HashMap<>();
-        pq = new PriorityQueue<Node>(new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                int diff = o2.order.size() - o1.order.size(); // Highest freq element at top aka max Heap
+        pq = new PriorityQueue<Node>((o1, o2) -> {
+            int diff = o2.order.size() - o1.order.size(); // Highest freq element at top aka max Heap
 
 
-                if (diff == 0) {
-                    int o2Size = o2.order.size() - 1;
-                    int o1Size = o1.order.size() - 1;
+            if (diff == 0) {
+                int o2Size = o2.order.size() - 1;
+                int o1Size = o1.order.size() - 1;
 
-                    return o2.order.get(o2Size) - o1.order.get(o1Size);
-                }
-                return diff;
+                return o2.order.get(o2Size) - o1.order.get(o1Size);
             }
+            return diff;
         });
     }
 

@@ -1,11 +1,3 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package leetcodeProblems;
 
 public class FindMedianOfTwoSortedArray4 {

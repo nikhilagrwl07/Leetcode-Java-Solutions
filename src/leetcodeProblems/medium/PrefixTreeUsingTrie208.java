@@ -25,10 +25,10 @@ class Trie {
         TrieNode tmpRoot = root;
 
         for (int i = 0; i < word.length(); i++) {
-            if (tmpRoot.trieNode[word.charAt(i) - 'a'] == null) {
-                tmpRoot.trieNode[word.charAt(i) - 'a'] = new TrieNode(word.charAt(i));
+            if (tmpRoot.child[word.charAt(i) - 'a'] == null) {
+                tmpRoot.child[word.charAt(i) - 'a'] = new TrieNode(word.charAt(i));
             }
-            tmpRoot = tmpRoot.trieNode[word.charAt(i) - 'a'];
+            tmpRoot = tmpRoot.child[word.charAt(i) - 'a'];
         }
         tmpRoot.countOfCompleteWord++;
     }
@@ -36,13 +36,13 @@ class Trie {
     public boolean search(String word) {
         TrieNode tmpRoot = root;
         for (int i = 0; i < word.length(); i++) {
-            if (tmpRoot.trieNode[word.charAt(i) - 'a'] == null) {
+            if (tmpRoot.child[word.charAt(i) - 'a'] == null) {
                 return false;
             }
-            else if (tmpRoot.trieNode[word.charAt(i) - 'a'].countOfCompleteWord >= 1 && i == word.length() - 1) {
+            else if (tmpRoot.child[word.charAt(i) - 'a'].countOfCompleteWord >= 1 && i == word.length() - 1) {
                 return true;
             }
-            tmpRoot = tmpRoot.trieNode[word.charAt(i) - 'a'];
+            tmpRoot = tmpRoot.child[word.charAt(i) - 'a'];
         }
         return false;
     }
@@ -50,10 +50,10 @@ class Trie {
     public boolean startsWith(String prefix) {
         TrieNode tmpRoot = root;
         for (int i = 0; i < prefix.length(); i++) {
-            if (tmpRoot.trieNode[prefix.charAt(i) - 'a'] == null) {
+            if (tmpRoot.child[prefix.charAt(i) - 'a'] == null) {
                 return false;
             }
-            tmpRoot = tmpRoot.trieNode[prefix.charAt(i) - 'a'];
+            tmpRoot = tmpRoot.child[prefix.charAt(i) - 'a'];
         }
         return true;
     }
@@ -61,13 +61,13 @@ class Trie {
 
 class TrieNode {
     char c;
-    TrieNode[] trieNode;
+    TrieNode[] child;
     int countOfCompleteWord;
 
     public TrieNode(char c) {
         this.c = c;
         countOfCompleteWord = 0;
-        this.trieNode = new TrieNode[26];
+        this.child = new TrieNode[26];
     }
 
     public char getC() {
@@ -78,12 +78,12 @@ class TrieNode {
         this.c = c;
     }
 
-    public TrieNode[] getTrieNode() {
-        return trieNode;
+    public TrieNode[] getChild() {
+        return child;
     }
 
-    public void setTrieNode(TrieNode[] trieNode) {
-        this.trieNode = trieNode;
+    public void setChild(TrieNode[] child) {
+        this.child = child;
     }
 }
 

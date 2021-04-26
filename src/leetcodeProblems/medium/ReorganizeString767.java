@@ -16,85 +16,49 @@ public class ReorganizeString767 {
         System.out.println(ob.reorganizeString(input2));
     }
 
-    // Time complexity - O(Count of distinct character in input string S * length of input string S)
-    public String reorganizeString(String s) {
-
-        if (s == null || s.isEmpty())
-            return "";
-
+    public String reorganizeString(String S) {
         Map<Character, Integer> freq = new HashMap<>();
-        Queue<Character> maxHeap = new PriorityQueue<>((c1, c2) -> {
-            return freq.get(c2) - freq.get(c1);
-        });
-        for (int i = 0; i < s.length(); i++) {
+        StringBuilder sb = new StringBuilder();
 
-            if (freq.get(s.charAt(i)) != null) {
-                maxHeap.remove(s.charAt(i));
+        for (int i = 0; i < S.length(); i++) {
+            char c = S.charAt(i);
+            freq.put(c, freq.getOrDefault(c, 0) + 1);
+        }
+
+        Queue<Character> maxHeap = new PriorityQueue<>((c1, c2) -> freq.get(c2) - freq.get(c1));
+        for (Map.Entry<Character, Integer> e : freq.entrySet()) {
+            maxHeap.offer(e.getKey());
+        }
+
+        while (maxHeap.size() >= 2) {
+            char first = maxHeap.poll();
+            char second = maxHeap.poll();
+
+            int firstFreq = freq.get(first);
+            int secondFreq = freq.get(second);
+            if (firstFreq > 1) {
+                freq.put(first, freq.get(first) - 1);
+                maxHeap.offer(first);
+            }
+            if (secondFreq > 1) {
+                freq.put(second, freq.get(second) - 1);
+                maxHeap.offer(second);
             }
 
-            freq.put(s.charAt(i), freq.getOrDefault(s.charAt(i), 0) + 1);
+            sb.append(first);
+            sb.append(second);
+        }
 
+        if (maxHeap.size() == 1) {
+            char t = maxHeap.poll();
+            int f = freq.get(t);
 
-            if ((s.length() % 2 == 0 && freq.get(s.charAt(i)) > s.length() / 2) ||
-                    (s.length() % 2 != 0 && freq.get(s.charAt(i)) > (s.length() / 2) + 1)) {
+            if (f > 1) {
                 return "";
-            }
-
-
-            maxHeap.offer(s.charAt(i));
-        }
-
-
-        int startIndex = 0;
-        char[] result = new char[s.length()];
-
-        char tmp = maxHeap.poll();
-        int ft = freq.get(tmp);
-        result[startIndex] = tmp;
-
-        if (freq.get(tmp) > 1) {
-            freq.put(tmp, freq.get(tmp) - 1);
-            maxHeap.offer(tmp);
-        } else {
-            freq.remove(tmp);
-        }
-
-
-        while (!maxHeap.isEmpty()) {
-            char c = maxHeap.poll();
-            int f = freq.get(c);
-            if (result[startIndex] == c) {
-
-                if (!maxHeap.isEmpty()) {
-                    char second = maxHeap.poll();
-
-                    if (freq.get(second) > 1) {
-                        freq.put(second, freq.get(second) - 1);
-                        maxHeap.offer(second);
-                    } else {
-                        freq.remove(second);
-                    }
-                    startIndex++;
-                    result[startIndex] = second;
-
-                    maxHeap.offer(c);
-                } else {
-                    return "";
-                }
-
             } else {
-                startIndex++;
-                result[startIndex] = c;
-
-                if (f == 1) {
-                    freq.remove(c);
-                } else {
-                    freq.put(c, freq.get(c) - 1);
-                    maxHeap.offer(c);
-                }
+                sb.append(t);
             }
         }
-
-        return new String(result);
+        return sb.toString();
     }
 }

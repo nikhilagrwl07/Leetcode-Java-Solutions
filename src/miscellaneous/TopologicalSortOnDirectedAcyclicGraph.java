@@ -1,16 +1,6 @@
-/*
-    Problem -
-    Solution -
-    Time Complexity -
-    Space Complexity -
- */
-
-
 package miscellaneous;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class TopologicalSortOnDirectedAcyclicGraph {
     public static void main(String[] args) {
@@ -28,13 +18,15 @@ public class TopologicalSortOnDirectedAcyclicGraph {
 
     // DAG
     static class Graph {
-
-        List<Integer> head[];
+        List<Integer>[] head;
+        Map<Integer, Integer> inDegreeMap;
 
         public Graph(int vertexCount) {
-            this.head = new ArrayList[vertexCount];
+            head = new ArrayList[vertexCount];
+            inDegreeMap = new HashMap<>();
             for (int i = 0; i < head.length; i++) {
                 head[i] = new ArrayList<>();
+                inDegreeMap.put(i, 0);
             }
         }
 
@@ -42,43 +34,36 @@ public class TopologicalSortOnDirectedAcyclicGraph {
             List<Integer> nodes = head[source];
             nodes.add(destination);
             head[source] = nodes;
+            inDegreeMap.put(destination, inDegreeMap.get(destination) + 1);
         }
 
         // Time Complexity - O(V+E)
-
         private void topologicalSort() {
-            boolean[] isVisited = new boolean[head.length];
-            Stack<Integer> stack = new Stack<>();
-
-            for (int source = 0; source < head.length; source++) {
-                topologicalSortUtil(source, isVisited, stack);
+            Queue<Integer> zeroInDegreeVertics = new LinkedList<>();
+            for (Map.Entry<Integer, Integer> e : inDegreeMap.entrySet()) {
+                if (e.getValue() == 0)
+                    zeroInDegreeVertics.offer(e.getKey());
             }
 
-            for (int source = head.length-1; source >=0; source--) {
-                topologicalSortUtil(source, isVisited, stack);
+            List<Integer> sortedOrder = new ArrayList<>();
+
+            while (!zeroInDegreeVertics.isEmpty()) {
+                Integer currentVertex = zeroInDegreeVertics.poll();
+                sortedOrder.add(currentVertex);
+
+                for (Integer child : head[currentVertex]) {
+                    inDegreeMap.put(child, inDegreeMap.get(child) - 1);
+                    if (inDegreeMap.get(child) == 0) {
+                        zeroInDegreeVertics.offer(child);
+                    }
+                }
             }
 
-            while (!stack.isEmpty()) {
-                System.out.print(stack.pop() + " ");
-            }
-        }
-
-        private void topologicalSortUtil(int source, boolean[] isVisited, Stack<Integer> stack) {
-
-            if (isVisited[source]) {
+            if (sortedOrder.size() != head.length) {
+                System.out.println("Topological Sort not possible since graph is not DAG and has cycle");
                 return;
             }
-
-            isVisited[source] = true;
-
-            List<Integer> neighbours = head[source];
-
-            for (Integer neighbour : neighbours) {
-                topologicalSortUtil(neighbour, isVisited, stack);
-            }
-
-            stack.push(source);
-
+            System.out.println(sortedOrder);
         }
     }
 

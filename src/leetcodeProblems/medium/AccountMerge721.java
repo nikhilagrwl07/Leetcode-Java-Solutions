@@ -34,61 +34,50 @@ public class AccountMerge721 {
     // Time Complexity - O(Summation(A[i].length * log(A[i].length))) for all i
     // Space Complexity - O(Summation(A[i].length)  for all i
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
-
-        Map<String, List<String>> graph = new HashMap<>(); // undirected graph
         Map<String, String> emailToName = new HashMap<>();
+        Map<String, List<String>> graph = new HashMap<>();
 
         for (List<String> account : accounts) {
-
             String name = account.get(0);
             String parentEmail = account.get(1);
             emailToName.put(parentEmail, name);
-            if (account.size() > 2) {
 
-                for (String child : account.subList(2, account.size())) {
-                    graph.computeIfAbsent(parentEmail, s -> new ArrayList<>()).add(child);
-                    graph.computeIfAbsent(child, s -> new ArrayList<>()).add(parentEmail); // making it undirected graph
-                    emailToName.put(child, name);
+            if (account.size() > 2) {
+                for (int i = 2; i < account.size(); i++) {
+                    String childEmail = account.get(i);
+                    graph.computeIfAbsent(parentEmail, k -> new ArrayList<>()).add(childEmail);
+                    graph.computeIfAbsent(childEmail, k -> new ArrayList<>()).add(parentEmail);
+                    emailToName.put(childEmail, name);
                 }
             } else {
-                graph.computeIfAbsent(parentEmail, s -> new ArrayList<>()).add(parentEmail);
+                graph.computeIfAbsent(parentEmail, k -> new ArrayList<>()).add(parentEmail);
             }
         }
 
-        List<String> visited = new ArrayList<>();
-        Map<String, List<String>> result = new HashMap<>();
-        Map<String, Boolean> isVisited = new HashMap<>();
-
+        List<List<String>> result = new ArrayList<>();
+        Map<String, Boolean> isVisited = new LinkedHashMap<>();
         for (Map.Entry<String, List<String>> e : graph.entrySet()) {
-
-            if (isVisited.get(e.getKey()) != null) {
+            String parentEmail = e.getKey();
+            if (isVisited.containsKey(parentEmail))
                 continue;
-            }
 
-            dfs(graph, e.getKey(), isVisited, visited);
+            List<String> connectedEmail = new ArrayList<>();
+            dfs(graph, parentEmail, connectedEmail, isVisited);
 
-            isVisited.putIfAbsent(e.getKey(), true);
-
-            Collections.sort(visited);
-
-            visited.add(0, emailToName.get(e.getKey()));
-
-            result.put(e.getKey(), new ArrayList<>(visited));
-            visited.clear();
+            Collections.sort(connectedEmail);
+            connectedEmail.add(0, emailToName.get(parentEmail));
+            result.add(new ArrayList<>(connectedEmail));
+            connectedEmail.clear();
         }
-
-        return new ArrayList<>(result.values());
+        return result;
     }
 
-    private void dfs(Map<String, List<String>> graph, String key, Map<String, Boolean> isVisited, List<String> visited) {
-
-        if (graph.get(key) != null) {
-            for (String neighbour : graph.get(key)) {
-                if (isVisited.get(neighbour) == null) {
-                    isVisited.put(neighbour, true);
-                    visited.add(neighbour);
-                    dfs(graph, neighbour, isVisited, visited);
-                }
+    private void dfs(Map<String, List<String>> graph, String parentEmail, List<String> connectedEmail, Map<String, Boolean> isVisited) {
+        if (!isVisited.containsKey(parentEmail)) {
+            isVisited.put(parentEmail, true);
+            connectedEmail.add(parentEmail);
+            for (String childEmail : graph.get(parentEmail)) {
+                dfs(graph, childEmail, connectedEmail, isVisited);
             }
         }
     }
